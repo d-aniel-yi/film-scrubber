@@ -18,6 +18,8 @@ export interface YouTubePlayerController {
   loading: boolean;
   /** Current time in seconds (updated by polling). */
   currentTime: number;
+  /** Total duration in seconds (updated by polling/state change). */
+  duration: number;
   /** True when state is playing. */
   isPlaying: boolean;
 }

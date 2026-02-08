@@ -41,8 +41,9 @@ export interface YTPlayerInstance {
   getCurrentTime: () => number;
   setPlaybackRate: (suggestedRate: number) => void;
   getAvailablePlaybackRates: () => number[];
+  getDuration: () => number;
   getPlayerState: () => number; // 1=playing, 2=paused, etc.
   destroy: () => void;
 }
 
-export {};
+export { };

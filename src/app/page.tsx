@@ -14,24 +14,15 @@ export default function Home() {
         </header>
         <ScrubberShell />
         <footer className="mt-8 border-t border-zinc-200 pt-4 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          <a
-            href="https://github.com"
+          Created by <a
+            href="https://da.nielyi.com"
             className="underline hover:text-zinc-700 dark:hover:text-zinc-300"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Feedback
+            Daniel Yi
           </a>
-          {" · "}
-          Deploy with{" "}
-          <a
-            href="https://vercel.com"
-            className="underline hover:text-zinc-700 dark:hover:text-zinc-300"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vercel
-          </a>
+
         </footer>
       </div>
     </main>

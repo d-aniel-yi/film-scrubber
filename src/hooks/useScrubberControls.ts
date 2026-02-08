@@ -13,13 +13,22 @@ export function useScrubberControls(
 ) {
   const stepSize = STEP_PRESETS[stepPreset];
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wasPlayingRef = useRef(false);
 
-  const stopHold = useCallback(() => {
+  const clearHold = useCallback(() => {
     if (holdIntervalRef.current) {
       clearInterval(holdIntervalRef.current);
       holdIntervalRef.current = null;
     }
   }, []);
+
+  const stopHold = useCallback(() => {
+    clearHold();
+    if (wasPlayingRef.current && controller?.ready) {
+      controller.play();
+    }
+    wasPlayingRef.current = false;
+  }, [clearHold, controller]);
 
   const step = useCallback(
     (direction: -1 | 1) => {
@@ -45,25 +54,27 @@ export function useScrubberControls(
 
   const startHoldRewind = useCallback(() => {
     if (!controller?.ready) return;
-    stopHold();
+    clearHold();
+    wasPlayingRef.current = controller.isPlaying;
     controller.pause();
     holdIntervalRef.current = setInterval(() => {
       const t = controller.getCurrentTime();
       const next = Math.max(0, t - stepSize);
       controller.seekTo(next);
     }, holdTickRateMs);
-  }, [controller, stepSize, holdTickRateMs, stopHold]);
+  }, [controller, stepSize, holdTickRateMs, clearHold]);
 
   const startHoldForward = useCallback(() => {
     if (!controller?.ready) return;
-    stopHold();
+    clearHold();
+    wasPlayingRef.current = controller.isPlaying;
     controller.pause();
     holdIntervalRef.current = setInterval(() => {
       const t = controller.getCurrentTime();
       const next = t + stepSize;
       controller.seekTo(next);
     }, holdTickRateMs);
-  }, [controller, stepSize, holdTickRateMs, stopHold]);
+  }, [controller, stepSize, holdTickRateMs, clearHold]);
 
   return {
     stepBack: () => step(-1),

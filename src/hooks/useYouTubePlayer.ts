@@ -36,6 +36,7 @@ export function useYouTubePlayer(videoId: string | null) {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const controller: YouTubePlayerController = {
@@ -50,11 +51,12 @@ export function useYouTubePlayer(videoId: string | null) {
     }, []),
     getAvailablePlaybackRates: useCallback(
       () => playerRef.current?.getAvailablePlaybackRates() ?? [],
-    []),
+      []),
     getPlayerState: useCallback(() => playerRef.current?.getPlayerState() ?? -1, []),
     ready,
     loading,
     currentTime,
+    duration,
     isPlaying,
   };
 
@@ -63,8 +65,10 @@ export function useYouTubePlayer(videoId: string | null) {
     if (!ready || !playerRef.current) return;
     const interval = setInterval(() => {
       const t = playerRef.current?.getCurrentTime() ?? 0;
+      const d = playerRef.current?.getDuration() ?? 0;
       const state = playerRef.current?.getPlayerState() ?? -1;
       setCurrentTime(t);
+      setDuration(d);
       setIsPlaying(state === YT_PLAYING);
     }, 200);
     return () => clearInterval(interval);
@@ -104,6 +108,9 @@ export function useYouTubePlayer(videoId: string | null) {
             enablejsapi: 1,
             controls: 0, // we use our own controls
             rel: 0,
+            iv_load_policy: 3, // suppress annotations
+            modestbranding: 1,
+            fs: 0, // disable fullscreen button
           },
           events: {
             onReady: (event: { target: YTPlayerInstance }) => {
