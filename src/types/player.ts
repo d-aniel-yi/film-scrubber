@@ -12,8 +12,14 @@ export interface YouTubePlayerController {
   getCurrentTime: () => number;
   setPlaybackRate: (rate: number) => void;
   getAvailablePlaybackRates: () => number[];
+  /** 1=playing, 2=paused, 3=buffering, 5=cued, 0=unstarted, -1=ended */
+  getPlayerState: () => number;
   ready: boolean;
   loading: boolean;
+  /** Current time in seconds (updated by polling). */
+  currentTime: number;
+  /** True when state is playing. */
+  isPlaying: boolean;
 }
 
 /** Shape of settings persisted in localStorage. */
