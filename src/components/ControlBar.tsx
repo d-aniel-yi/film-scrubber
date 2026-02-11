@@ -102,7 +102,7 @@ export function ControlBar({
               type="button"
               disabled={!canControl}
               onClick={togglePlayPause}
-              className="rounded bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800"
+              className="rounded bg-zinc-800 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800"
               aria-label={controller?.isPlaying ? "Pause" : "Play"}
             >
               {controller?.isPlaying ? "Pause" : "Play"}
@@ -111,7 +111,7 @@ export function ControlBar({
               <select
                 value={speed}
                 onChange={(e) => handleSpeedChange(Number(e.target.value))}
-                className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                className="rounded border border-zinc-300 bg-white px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
                 aria-label="Playback speed"
               >
                 {rates.map((r) => (
@@ -134,7 +134,7 @@ export function ControlBar({
                 <select
                   value={stepPreset}
                   onChange={(e) => onStepPresetChange(e.target.value as StepPresetKey)}
-                  className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                  className="rounded border border-zinc-300 bg-white px-2 py-2.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
                   aria-label="Step size"
                 >
                   {(Object.keys(STEP_PRESETS) as StepPresetKey[]).map((key) => (
@@ -147,7 +147,7 @@ export function ControlBar({
                   <button
                     type="button"
                     onClick={scrubber.stepBack}
-                    className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                    className="rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                     aria-label="Step backward"
                   >
                     −
@@ -155,7 +155,7 @@ export function ControlBar({
                   <button
                     type="button"
                     onClick={scrubber.stepForward}
-                    className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                    className="rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                     aria-label="Step forward"
                   >
                     +
@@ -166,7 +166,7 @@ export function ControlBar({
                     <button
                       type="button"
                       onClick={() => scrubber.jumpBack(sec)}
-                      className="rounded border border-zinc-300 bg-white px-1.5 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                      className="rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                       aria-label={`Jump back ${sec}s`}
                     >
                       −{sec}s
@@ -174,7 +174,7 @@ export function ControlBar({
                     <button
                       type="button"
                       onClick={() => scrubber.jumpForward(sec)}
-                      className="rounded border border-zinc-300 bg-white px-1.5 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                      className="rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                       aria-label={`Jump forward ${sec}s`}
                     >
                       +{sec}s
@@ -188,7 +188,8 @@ export function ControlBar({
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
-                    className="flex-1 touch-none rounded border border-zinc-300 bg-white py-3 text-center text-sm font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 sm:flex-none sm:px-3 sm:py-1.5"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="flex-1 select-none touch-none rounded border border-zinc-300 bg-white py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 sm:flex-none sm:px-3 sm:py-2.5"
                     aria-label="Hold to rewind"
                   >
                     Rewind
@@ -199,7 +200,8 @@ export function ControlBar({
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
-                    className="flex-1 touch-none rounded border border-zinc-300 bg-white py-3 text-center text-sm font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 sm:flex-none sm:px-3 sm:py-1.5"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="flex-1 select-none touch-none rounded border border-zinc-300 bg-white py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 sm:flex-none sm:px-3 sm:py-2.5"
                     aria-label="Hold to forward"
                   >
                     Forward
