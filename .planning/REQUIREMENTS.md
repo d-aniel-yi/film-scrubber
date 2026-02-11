@@ -72,33 +72,33 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAYOUT-01 | - | Pending |
-| LAYOUT-02 | - | Pending |
-| LAYOUT-03 | - | Pending |
-| LAYOUT-04 | - | Pending |
-| TOUCH-01 | - | Pending |
-| TOUCH-02 | - | Pending |
-| TOUCH-03 | - | Pending |
-| TOUCH-04 | - | Pending |
-| TOUCH-05 | - | Pending |
-| PLAY-01 | - | Pending |
-| PLAY-02 | - | Pending |
-| PLAY-03 | - | Pending |
-| SCRUB-01 | - | Pending |
-| SCRUB-02 | - | Pending |
-| SCRUB-03 | - | Pending |
-| SCRUB-04 | - | Pending |
-| SCRUB-05 | - | Pending |
-| JUMP-01 | - | Pending |
-| JUMP-02 | - | Pending |
-| JUMP-03 | - | Pending |
-| KEY-01 | - | Pending |
+| TOUCH-01 | Phase 1 | Pending |
+| TOUCH-02 | Phase 1 | Pending |
+| TOUCH-03 | Phase 1 | Pending |
+| TOUCH-04 | Phase 1 | Pending |
+| TOUCH-05 | Phase 1 | Pending |
+| PLAY-01 | Phase 2 | Pending |
+| PLAY-02 | Phase 2 | Pending |
+| PLAY-03 | Phase 2 | Pending |
+| SCRUB-01 | Phase 2 | Pending |
+| SCRUB-02 | Phase 2 | Pending |
+| SCRUB-03 | Phase 2 | Pending |
+| SCRUB-04 | Phase 2 | Pending |
+| SCRUB-05 | Phase 2 | Pending |
+| JUMP-01 | Phase 2 | Pending |
+| JUMP-02 | Phase 2 | Pending |
+| JUMP-03 | Phase 2 | Pending |
+| LAYOUT-01 | Phase 3 | Pending |
+| LAYOUT-02 | Phase 3 | Pending |
+| LAYOUT-03 | Phase 3 | Pending |
+| LAYOUT-04 | Phase 3 | Pending |
+| KEY-01 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21 ⚠️
+- Mapped to phases: 21
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-11*
-*Last updated: 2026-02-11 after initial definition*
+*Last updated: 2026-02-11 after roadmap creation*
