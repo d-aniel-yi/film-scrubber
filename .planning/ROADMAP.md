@@ -29,10 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User cannot trigger double-tap zoom when using buttons
   4. Buttons show visual press feedback (scale or color) on tap
   5. Hold buttons show distinct visual state while being held
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD during planning
+- [ ] 01-01-PLAN.md — Button sizing and touch prevention (44px targets, no text selection, no zoom)
+- [ ] 01-02-PLAN.md — Visual feedback states (press feedback and hold state indicators)
 
 ### Phase 2: Core Playback & Scrubbing
 **Goal**: Users can play, seek, jump through time, and hold-to-scrub in both directions
