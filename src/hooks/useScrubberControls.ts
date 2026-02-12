@@ -2,16 +2,14 @@
 
 import { useCallback, useRef, useState } from "react";
 import type { YouTubePlayerController } from "@/types/player";
-import { STEP_PRESETS, JUMP_AMOUNTS } from "@/lib/constants";
-import type { StepPresetKey } from "@/lib/constants";
+import { JUMP_AMOUNTS } from "@/lib/constants";
 import { stepTime, jumpTime } from "@/lib/time";
 
 export function useScrubberControls(
   controller: YouTubePlayerController | null,
-  stepPreset: StepPresetKey,
   holdTickRateMs: number
 ) {
-  const stepSize = STEP_PRESETS[stepPreset];
+  const stepSize = 0.033; // Fixed step size (will be removed in 02-02)
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const wasPlayingRef = useRef(false);
   const [holdDirection, setHoldDirection] = useState<"rewind" | "forward" | null>(null);

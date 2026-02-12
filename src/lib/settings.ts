@@ -3,20 +3,15 @@
  */
 
 import type { ScrubberSettings } from "@/types/player";
-import { STEP_PRESETS, HOLD_TICK_RATE_MS } from "@/lib/constants";
-import type { StepPresetKey } from "@/lib/constants";
+import { SLOW_MO_SPEED, HOLD_TICK_RATE_MS } from "@/lib/constants";
 
 const STORAGE_KEY = "film-scrubber-settings";
 
 const DEFAULT_SETTINGS: ScrubberSettings = {
   speed: 1,
-  stepPreset: "medium",
+  slowMoSpeed: SLOW_MO_SPEED.default,
   holdTickRateMs: HOLD_TICK_RATE_MS.default,
 };
-
-function isValidStepPreset(key: string): key is StepPresetKey {
-  return key in STEP_PRESETS;
-}
 
 export function loadSettings(): ScrubberSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
@@ -25,13 +20,13 @@ export function loadSettings(): ScrubberSettings {
     if (!raw) return DEFAULT_SETTINGS;
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const speed = typeof parsed.speed === "number" ? parsed.speed : DEFAULT_SETTINGS.speed;
-    const stepPreset = typeof parsed.stepPreset === "string" && isValidStepPreset(parsed.stepPreset)
-      ? parsed.stepPreset
-      : DEFAULT_SETTINGS.stepPreset;
+    const slowMoSpeed = typeof parsed.slowMoSpeed === "number"
+      ? Math.max(SLOW_MO_SPEED.min, Math.min(SLOW_MO_SPEED.max, parsed.slowMoSpeed))
+      : DEFAULT_SETTINGS.slowMoSpeed;
     const holdTickRateMs = typeof parsed.holdTickRateMs === "number"
       ? Math.max(HOLD_TICK_RATE_MS.min, Math.min(HOLD_TICK_RATE_MS.max, parsed.holdTickRateMs))
       : DEFAULT_SETTINGS.holdTickRateMs;
-    return { speed, stepPreset, holdTickRateMs };
+    return { speed, slowMoSpeed, holdTickRateMs };
   } catch {
     return DEFAULT_SETTINGS;
   }
