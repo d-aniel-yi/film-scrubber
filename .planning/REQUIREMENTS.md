@@ -72,11 +72,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TOUCH-01 | Phase 1 | Pending |
-| TOUCH-02 | Phase 1 | Pending |
-| TOUCH-03 | Phase 1 | Pending |
-| TOUCH-04 | Phase 1 | Pending |
-| TOUCH-05 | Phase 1 | Pending |
+| TOUCH-01 | Phase 1 | Complete |
+| TOUCH-02 | Phase 1 | Complete |
+| TOUCH-03 | Phase 1 | Complete |
+| TOUCH-04 | Phase 1 | Complete |
+| TOUCH-05 | Phase 1 | Complete |
 | PLAY-01 | Phase 2 | Pending |
 | PLAY-02 | Phase 2 | Pending |
 | PLAY-03 | Phase 2 | Pending |
