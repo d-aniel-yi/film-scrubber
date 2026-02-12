@@ -153,12 +153,12 @@ export function ControlBar({
                 <div className="flex w-full gap-2 sm:w-auto">
                   <button
                     type="button"
-                    onPointerDown={scrubber.startHoldRewind}
+                    onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewind(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
                       scrubber.holdDirection === "rewind"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
@@ -169,12 +169,12 @@ export function ControlBar({
                   </button>
                   <button
                     type="button"
-                    onPointerDown={scrubber.startHoldForward}
+                    onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldForward(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
                       scrubber.holdDirection === "forward"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
@@ -187,12 +187,12 @@ export function ControlBar({
                 <div className="flex w-full gap-2 sm:w-auto">
                   <button
                     type="button"
-                    onPointerDown={scrubber.startHoldRewindFast}
+                    onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewindFast(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
                       scrubber.holdDirection === "rewind-fast"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
@@ -203,12 +203,12 @@ export function ControlBar({
                   </button>
                   <button
                     type="button"
-                    onPointerDown={scrubber.startHoldForwardFast}
+                    onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldForwardFast(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
                       scrubber.holdDirection === "forward-fast"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
