@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** Controls must feel like a dedicated film room clicker — native-feeling buttons with instant response
-**Current focus:** Phase 1 complete, ready for Phase 2 planning
+**Current focus:** Phase 2 in progress (Core Playback & Scrubbing)
 
 ## Current Position
 
-Phase: 1 of 4 (Touch-Native Foundation) - COMPLETE
-Plan: 2 of 2 in phase (complete)
-Status: Phase complete
-Last activity: 2026-02-12 - Completed 01-02-PLAN.md
+Phase: 2 of 4 (Core Playback & Scrubbing)
+Plan: 1 of 3 in phase (complete)
+Status: In progress
+Last activity: 2026-02-12 - Completed 02-01-PLAN.md
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 30 min
-- Total execution time: 1.0 hours
+- Total plans completed: 3
+- Average duration: 21 min
+- Total execution time: 1.05 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-touch-native-foundation | 2/2 | 60 min | 30 min |
+| 02-core-playback-scrubbing | 1/3 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (8 min), 01-02 (52 min)
-- Trend: 01-02 longer due to checkpoint pause for user verification
+- Last 5 plans: 01-01 (8 min), 01-02 (52 min), 02-01 (3 min)
+- Trend: 02-01 very fast (no UI verification needed, pure code changes)
 
 *Updated after each plan completion*
 
@@ -56,6 +57,8 @@ Recent decisions affecting current work:
 - `active:scale-95 active:bg-*` on all interactive buttons for press feedback
 - `holdDirection: "rewind" | "forward" | null` for per-button hold state tracking
 - Conditional template literal className for state-dependent styling on hold buttons
+- Amber colors (bg-amber-600/500) for slow-mo active state to distinguish from normal playback
+- slowMoSpeed persisted in localStorage and URL state (query param: slowMo)
 
 ### Pending Todos
 
@@ -67,6 +70,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-12 (plan 01-02 execution)
-Stopped at: Completed 01-02-PLAN.md (visual feedback states) - Phase 1 complete
+Last session: 2026-02-12 (plan 02-01 execution)
+Stopped at: Completed 02-01-PLAN.md (slow-mo toggle and controls simplification)
 Resume file: None
