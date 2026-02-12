@@ -5,8 +5,6 @@ import type { YouTubePlayerController } from "@/types/player";
 import { KEYBOARD_MAP } from "@/lib/constants";
 
 type ScrubberForKeyboard = {
-  stepBack: () => void;
-  stepForward: () => void;
   startHoldRewind: () => void;
   startHoldForward: () => void;
   stopHold: () => void;
@@ -43,18 +41,6 @@ export function useKeyboardShortcuts(
       if (key === KEYBOARD_MAP.pause) {
         e.preventDefault();
         controller.pause();
-        return;
-      }
-
-      if (key === KEYBOARD_MAP.stepBack) {
-        e.preventDefault();
-        scrubber?.stepBack();
-        return;
-      }
-
-      if (key === KEYBOARD_MAP.stepForward) {
-        e.preventDefault();
-        scrubber?.stepForward();
         return;
       }
 

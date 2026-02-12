@@ -3,22 +3,25 @@
 import { useCallback, useRef, useState } from "react";
 import type { YouTubePlayerController } from "@/types/player";
 import { JUMP_AMOUNTS } from "@/lib/constants";
-import { stepTime, jumpTime } from "@/lib/time";
+import { jumpTime } from "@/lib/time";
 
 export function useScrubberControls(
   controller: YouTubePlayerController | null,
-  holdTickRateMs: number
+  scrubSpeedMultiplier: number
 ) {
-  const stepSize = 0.033; // Fixed step size (will be removed in 02-02)
-  const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const holdStartTimeRef = useRef<number | null>(null);
+  const videoStartTimeRef = useRef<number | null>(null);
   const wasPlayingRef = useRef(false);
   const [holdDirection, setHoldDirection] = useState<"rewind" | "forward" | null>(null);
 
   const clearHold = useCallback(() => {
-    if (holdIntervalRef.current) {
-      clearInterval(holdIntervalRef.current);
-      holdIntervalRef.current = null;
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
     }
+    holdStartTimeRef.current = null;
+    videoStartTimeRef.current = null;
   }, []);
 
   const stopHold = useCallback(() => {
@@ -29,17 +32,6 @@ export function useScrubberControls(
     wasPlayingRef.current = false;
     setHoldDirection(null);
   }, [clearHold, controller]);
-
-  const step = useCallback(
-    (direction: -1 | 1) => {
-      if (!controller?.ready) return;
-      controller.pause();
-      const t = controller.getCurrentTime();
-      const next = stepTime(t, stepSize, direction);
-      controller.seekTo(next);
-    },
-    [controller, stepSize]
-  );
 
   const jump = useCallback(
     (seconds: number) => {
@@ -58,12 +50,23 @@ export function useScrubberControls(
     wasPlayingRef.current = controller.isPlaying;
     controller.pause();
     setHoldDirection("rewind");
-    holdIntervalRef.current = setInterval(() => {
-      const t = controller.getCurrentTime();
-      const next = Math.max(0, t - stepSize);
-      controller.seekTo(next);
-    }, holdTickRateMs);
-  }, [controller, stepSize, holdTickRateMs, clearHold]);
+
+    const videoStart = controller.getCurrentTime();
+    videoStartTimeRef.current = videoStart;
+    holdStartTimeRef.current = performance.now();
+
+    const scrub = () => {
+      if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
+
+      const elapsed = (performance.now() - holdStartTimeRef.current) / 1000; // seconds
+      const targetTime = Math.max(0, videoStartTimeRef.current - (elapsed * scrubSpeedMultiplier));
+
+      controller.seekTo(targetTime);
+      rafIdRef.current = requestAnimationFrame(scrub);
+    };
+
+    rafIdRef.current = requestAnimationFrame(scrub);
+  }, [controller, scrubSpeedMultiplier, clearHold]);
 
   const startHoldForward = useCallback(() => {
     if (!controller?.ready) return;
@@ -71,22 +74,31 @@ export function useScrubberControls(
     wasPlayingRef.current = controller.isPlaying;
     controller.pause();
     setHoldDirection("forward");
-    holdIntervalRef.current = setInterval(() => {
-      const t = controller.getCurrentTime();
-      const next = t + stepSize;
-      controller.seekTo(next);
-    }, holdTickRateMs);
-  }, [controller, stepSize, holdTickRateMs, clearHold]);
+
+    const videoStart = controller.getCurrentTime();
+    const duration = controller.duration || Infinity;
+    videoStartTimeRef.current = videoStart;
+    holdStartTimeRef.current = performance.now();
+
+    const scrub = () => {
+      if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
+
+      const elapsed = (performance.now() - holdStartTimeRef.current) / 1000; // seconds
+      const targetTime = Math.min(duration, videoStartTimeRef.current + (elapsed * scrubSpeedMultiplier));
+
+      controller.seekTo(targetTime);
+      rafIdRef.current = requestAnimationFrame(scrub);
+    };
+
+    rafIdRef.current = requestAnimationFrame(scrub);
+  }, [controller, scrubSpeedMultiplier, clearHold]);
 
   return {
-    stepBack: () => step(-1),
-    stepForward: () => step(1),
     jumpBack: (seconds: number) => jump(-seconds),
     jumpForward: (seconds: number) => jump(seconds),
     startHoldRewind,
     startHoldForward,
     stopHold,
-    stepSize,
     jumpAmounts: JUMP_AMOUNTS,
     holdDirection,
   };
