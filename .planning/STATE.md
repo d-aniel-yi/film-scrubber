@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 2 of 4 (Core Playback & Scrubbing)
-Plan: 1 of 3 in phase (complete)
+Plan: 2 of 3 in phase (complete)
 Status: In progress
-Last activity: 2026-02-12 - Completed 02-01-PLAN.md
+Last activity: 2026-02-12 - Completed 02-02-PLAN.md
 
-Progress: [███░░░░░░░] 30%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 21 min
-- Total execution time: 1.05 hours
+- Total plans completed: 4
+- Average duration: 16 min
+- Total execution time: 1.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-touch-native-foundation | 2/2 | 60 min | 30 min |
-| 02-core-playback-scrubbing | 1/3 | 3 min | 3 min |
+| 02-core-playback-scrubbing | 2/3 | 6 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (8 min), 01-02 (52 min), 02-01 (3 min)
-- Trend: 02-01 very fast (no UI verification needed, pure code changes)
+- Last 5 plans: 01-01 (8 min), 01-02 (52 min), 02-01 (3 min), 02-02 (3 min)
+- Trend: Phase 2 executing very fast (pure code changes, no UI verification)
 
 *Updated after each plan completion*
 
@@ -48,6 +48,7 @@ Recent decisions affecting current work:
 - Phase 1: Per-button hold direction (holdDirection) instead of single isHolding boolean — only the actively held button shows visual state
 - Phase 2: Slow-mo toggle instead of speed dropdown (faster to switch during review)
 - Phase 2: Configurable forward/rewind speed multiplier (different tasks need different scrub speeds)
+- Phase 2: RAF time-based scrubbing instead of setInterval (eliminates stutter from YouTube's variable seek latency)
 
 ### Patterns Established
 
@@ -59,6 +60,9 @@ Recent decisions affecting current work:
 - Conditional template literal className for state-dependent styling on hold buttons
 - Amber colors (bg-amber-600/500) for slow-mo active state to distinguish from normal playback
 - slowMoSpeed persisted in localStorage and URL state (query param: slowMo)
+- RAF time-based scrubbing pattern: `targetTime = startTime ± (elapsed × multiplier)`
+- Capture video start time and wall-clock start time at hold start, calculate target position each RAF tick
+- scrubSpeedMultiplier persisted in localStorage and URL state (query param: scrubSpeed)
 
 ### Pending Todos
 
@@ -70,6 +74,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-12 (plan 02-01 execution)
-Stopped at: Completed 02-01-PLAN.md (slow-mo toggle and controls simplification)
+Last session: 2026-02-12 (plan 02-02 execution)
+Stopped at: Completed 02-02-PLAN.md (RAF-based smooth scrubbing)
 Resume file: None
