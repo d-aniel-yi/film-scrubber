@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(gsd:map-codebase)",
+      "Skill(gsd:map-codebase:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(wc:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(npx next build:*)",
+      "Bash(ls:*)",
+      "Bash(echo:*)",
+      "Bash(done)"
+    ]
+  }
+}

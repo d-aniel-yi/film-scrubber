@@ -12,6 +12,7 @@ export function useScrubberControls(
   const rafIdRef = useRef<number | null>(null);
   const holdStartTimeRef = useRef<number | null>(null);
   const videoStartTimeRef = useRef<number | null>(null);
+  const lastSeekTimeRef = useRef<number>(0);
   const wasPlayingRef = useRef(false);
   const [holdDirection, setHoldDirection] = useState<"rewind" | "forward" | null>(null);
 
