@@ -7,21 +7,23 @@ import { jumpTime } from "@/lib/time";
 
 type HoldDirection = "rewind" | "forward" | "rewind-fast" | "forward-fast" | null;
 
-// Rewind uses seekTo (no reverse playback in YouTube).
-// Higher throttle = fewer seeks = less mobile buffering stutter.
+// seekTo throttle — gives YouTube time to process each seek.
+// Mobile needs more breathing room than desktop.
 const SEEK_THROTTLE_MS = 150;
+
+// How far back (seconds) to pre-buffer when scrubbing starts.
+// We seek backward briefly to warm YouTube's cache, then start scrubbing.
+const PREBUFFER_SECONDS = 5;
 
 export function useScrubberControls(
   controller: YouTubePlayerController | null,
-  scrubSpeedFast: number,
-  currentSpeed: number
+  scrubSpeedFast: number
 ) {
   const rafIdRef = useRef<number | null>(null);
   const holdStartTimeRef = useRef<number | null>(null);
   const videoStartTimeRef = useRef<number | null>(null);
   const lastSeekTimeRef = useRef<number>(0);
   const wasPlayingRef = useRef(false);
-  const usingPlaybackRef = useRef(false);
   const [holdDirection, setHoldDirection] = useState<HoldDirection>(null);
 
   const clearHold = useCallback(() => {
@@ -35,19 +37,12 @@ export function useScrubberControls(
 
   const stopHold = useCallback(() => {
     clearHold();
-    // Restore playback rate if forward hold changed it
-    if (usingPlaybackRef.current && controller?.ready) {
-      controller.setPlaybackRate(currentSpeed);
-      usingPlaybackRef.current = false;
-    }
     if (wasPlayingRef.current && controller?.ready) {
       controller.play();
-    } else {
-      controller?.pause();
     }
     wasPlayingRef.current = false;
     setHoldDirection(null);
-  }, [clearHold, controller, currentSpeed]);
+  }, [clearHold, controller]);
 
   const jump = useCallback(
     (seconds: number) => {
@@ -60,16 +55,27 @@ export function useScrubberControls(
     [controller]
   );
 
-  const startRewind = useCallback(
-    (direction: "rewind" | "rewind-fast", multiplier: number) => {
-      if (!controller?.ready) return;
+  const startHold = useCallback(
+    (direction: HoldDirection, multiplier: number) => {
+      if (!controller?.ready || !direction) return;
       clearHold();
       wasPlayingRef.current = controller.isPlaying;
-      usingPlaybackRef.current = false;
       controller.pause();
       setHoldDirection(direction);
 
-      videoStartTimeRef.current = controller.getCurrentTime();
+      const videoStart = controller.getCurrentTime();
+      const duration = controller.duration || Infinity;
+      const isRewind = direction === "rewind" || direction === "rewind-fast";
+
+      // Pre-buffer: seek backward briefly to warm YouTube's cache
+      if (isRewind) {
+        const prebufferTarget = Math.max(0, videoStart - PREBUFFER_SECONDS);
+        controller.seekTo(prebufferTarget);
+        // Seek back to start position — YouTube should now have this range cached
+        controller.seekTo(videoStart);
+      }
+
+      videoStartTimeRef.current = videoStart;
       holdStartTimeRef.current = performance.now();
       lastSeekTimeRef.current = 0;
 
@@ -78,7 +84,10 @@ export function useScrubberControls(
         const now = performance.now();
         if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
           const elapsed = (now - holdStartTimeRef.current) / 1000;
-          const targetTime = Math.max(0, videoStartTimeRef.current - elapsed * multiplier);
+          const delta = elapsed * multiplier;
+          const targetTime = isRewind
+            ? Math.max(0, videoStartTimeRef.current - delta)
+            : Math.min(duration, videoStartTimeRef.current + delta);
           controller.seekTo(targetTime);
           lastSeekTimeRef.current = now;
         }
@@ -90,28 +99,10 @@ export function useScrubberControls(
     [controller, clearHold]
   );
 
-  const startForward = useCallback(
-    (direction: "forward" | "forward-fast", multiplier: number) => {
-      if (!controller?.ready) return;
-      clearHold();
-      wasPlayingRef.current = controller.isPlaying;
-      usingPlaybackRef.current = true;
-      setHoldDirection(direction);
-
-      // Use native playback for smooth forward scrubbing.
-      // Cap at YouTube's max supported rate.
-      const rates = controller.getAvailablePlaybackRates();
-      const maxRate = rates.length > 0 ? Math.max(...rates) : 2;
-      controller.setPlaybackRate(Math.min(multiplier, maxRate));
-      controller.play();
-    },
-    [controller, clearHold]
-  );
-
-  const startHoldRewind = useCallback(() => startRewind("rewind", 1), [startRewind]);
-  const startHoldForward = useCallback(() => startForward("forward", 1), [startForward]);
-  const startHoldRewindFast = useCallback(() => startRewind("rewind-fast", scrubSpeedFast), [startRewind, scrubSpeedFast]);
-  const startHoldForwardFast = useCallback(() => startForward("forward-fast", scrubSpeedFast), [startForward, scrubSpeedFast]);
+  const startHoldRewind = useCallback(() => startHold("rewind", 1), [startHold]);
+  const startHoldForward = useCallback(() => startHold("forward", 1), [startHold]);
+  const startHoldRewindFast = useCallback(() => startHold("rewind-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
+  const startHoldForwardFast = useCallback(() => startHold("forward-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
 
   return {
     jumpBack: (seconds: number) => jump(-seconds),

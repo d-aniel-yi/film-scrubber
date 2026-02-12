@@ -45,8 +45,7 @@ export function ScrubberShell() {
   const { controller, containerId } = useYouTubePlayer(videoId);
   const scrubber = useScrubberControls(
     videoId ? controller : null,
-    scrubSpeedFast,
-    speed
+    scrubSpeedFast
   );
   useKeyboardShortcuts(
     Boolean(videoId && controller.ready),
