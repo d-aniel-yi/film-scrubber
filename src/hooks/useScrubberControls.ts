@@ -56,16 +56,22 @@ export function useScrubberControls(
     videoStartTimeRef.current = videoStart;
     holdStartTimeRef.current = performance.now();
 
+    const SEEK_THROTTLE_MS = 100;
+
     const scrub = () => {
       if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
 
-      const elapsed = (performance.now() - holdStartTimeRef.current) / 1000; // seconds
-      const targetTime = Math.max(0, videoStartTimeRef.current - (elapsed * scrubSpeedMultiplier));
-
-      controller.seekTo(targetTime);
+      const now = performance.now();
+      if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
+        const elapsed = (now - holdStartTimeRef.current) / 1000;
+        const targetTime = Math.max(0, videoStartTimeRef.current - (elapsed * scrubSpeedMultiplier));
+        controller.seekTo(targetTime);
+        lastSeekTimeRef.current = now;
+      }
       rafIdRef.current = requestAnimationFrame(scrub);
     };
 
+    lastSeekTimeRef.current = 0;
     rafIdRef.current = requestAnimationFrame(scrub);
   }, [controller, scrubSpeedMultiplier, clearHold]);
 
@@ -81,16 +87,22 @@ export function useScrubberControls(
     videoStartTimeRef.current = videoStart;
     holdStartTimeRef.current = performance.now();
 
+    const SEEK_THROTTLE_MS = 100;
+
     const scrub = () => {
       if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
 
-      const elapsed = (performance.now() - holdStartTimeRef.current) / 1000; // seconds
-      const targetTime = Math.min(duration, videoStartTimeRef.current + (elapsed * scrubSpeedMultiplier));
-
-      controller.seekTo(targetTime);
+      const now = performance.now();
+      if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
+        const elapsed = (now - holdStartTimeRef.current) / 1000;
+        const targetTime = Math.min(duration, videoStartTimeRef.current + (elapsed * scrubSpeedMultiplier));
+        controller.seekTo(targetTime);
+        lastSeekTimeRef.current = now;
+      }
       rafIdRef.current = requestAnimationFrame(scrub);
     };
 
+    lastSeekTimeRef.current = 0;
     rafIdRef.current = requestAnimationFrame(scrub);
   }, [controller, scrubSpeedMultiplier, clearHold]);
 
