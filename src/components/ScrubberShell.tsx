@@ -7,8 +7,7 @@ import { parseUrlState, buildSearchParams, applyUrlStateToSettings } from "@/lib
 import { useYouTubePlayer } from "@/hooks/useYouTubePlayer";
 import { useScrubberControls } from "@/hooks/useScrubberControls";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { HOLD_TICK_RATE_MS } from "@/lib/constants";
-import type { StepPresetKey } from "@/lib/constants";
+import { HOLD_TICK_RATE_MS, SLOW_MO_SPEED } from "@/lib/constants";
 import { UrlInput } from "./UrlInput";
 import { PlayerArea } from "./PlayerArea";
 import { ControlBar } from "./ControlBar";
@@ -19,7 +18,8 @@ const URL_DEBOUNCE_MS = 500;
 export function ScrubberShell() {
   const [urlInput, setUrlInput] = useState("");
   const [videoId, setVideoId] = useState<string | null>(null);
-  const [stepPreset, setStepPreset] = useState<StepPresetKey>("medium");
+  const [slowMoSpeed, setSlowMoSpeed] = useState<number>(SLOW_MO_SPEED.default);
+  const [isSlowMo, setIsSlowMo] = useState(false);
   const [holdTickRateMs, setHoldTickRateMs] = useState<number>(HOLD_TICK_RATE_MS.default);
   const [speed, setSpeed] = useState(1);
   const urlUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -29,7 +29,7 @@ export function ScrubberShell() {
     const s = loadSettings();
     const urlState = parseUrlState();
     const applied = applyUrlStateToSettings(urlState);
-    setStepPreset(applied.stepPreset ?? s.stepPreset);
+    setSlowMoSpeed(applied.slowMoSpeed ?? s.slowMoSpeed);
     setHoldTickRateMs(applied.holdTickRateMs ?? s.holdTickRateMs);
     setSpeed(applied.speed ?? s.speed);
     if (applied.videoId) {
@@ -39,13 +39,12 @@ export function ScrubberShell() {
   }, []);
 
   useEffect(() => {
-    saveSettings({ speed, stepPreset, holdTickRateMs });
-  }, [speed, stepPreset, holdTickRateMs]);
+    saveSettings({ speed, slowMoSpeed, holdTickRateMs });
+  }, [speed, slowMoSpeed, holdTickRateMs]);
 
   const { controller, containerId } = useYouTubePlayer(videoId);
   const scrubber = useScrubberControls(
     videoId ? controller : null,
-    stepPreset,
     holdTickRateMs
   );
   useKeyboardShortcuts(
@@ -53,6 +52,14 @@ export function ScrubberShell() {
     videoId ? controller : null,
     scrubber
   );
+
+  const toggleSlowMo = () => {
+    const newIsSlowMo = !isSlowMo;
+    setIsSlowMo(newIsSlowMo);
+    const newSpeed = newIsSlowMo ? slowMoSpeed : 1;
+    setSpeed(newSpeed);
+    controller.setPlaybackRate(newSpeed);
+  };
 
   useEffect(() => {
     if (!videoId || !controller.ready || hasSeekedFromUrlRef.current) return;
@@ -75,7 +82,7 @@ export function ScrubberShell() {
         v: videoId,
         t: controller.currentTime,
         speed,
-        stepPreset,
+        slowMoSpeed,
         holdTick: holdTickRateMs,
       });
       const url = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
@@ -84,7 +91,7 @@ export function ScrubberShell() {
     return () => {
       if (urlUpdateTimeoutRef.current) clearTimeout(urlUpdateTimeoutRef.current);
     };
-  }, [videoId, controller.currentTime, speed, stepPreset, holdTickRateMs]);
+  }, [videoId, controller.currentTime, speed, slowMoSpeed, holdTickRateMs]);
 
   const [urlError, setUrlError] = useState<string | null>(null);
 
@@ -121,8 +128,10 @@ export function ScrubberShell() {
         controller={videoId ? controller : null}
         speed={speed}
         onSpeedChange={setSpeed}
-        stepPreset={stepPreset}
-        onStepPresetChange={setStepPreset}
+        slowMoSpeed={slowMoSpeed}
+        onSlowMoSpeedChange={setSlowMoSpeed}
+        isSlowMo={isSlowMo}
+        onToggleSlowMo={toggleSlowMo}
         holdTickRateMs={holdTickRateMs}
         onHoldTickRateMsChange={setHoldTickRateMs}
         scrubber={scrubber}

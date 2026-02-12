@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { YouTubePlayerController } from "@/types/player";
-import type { StepPresetKey } from "@/lib/constants";
-import { STEP_PRESETS, HOLD_TICK_RATE_MS } from "@/lib/constants";
+import { SLOW_MO_SPEED, HOLD_TICK_RATE_MS } from "@/lib/constants";
 import { formatTime } from "@/lib/time";
 
 type ScrubberControls = {
@@ -23,18 +22,14 @@ type ControlBarProps = {
   controller?: YouTubePlayerController | null;
   speed?: number;
   onSpeedChange?: (rate: number) => void;
-  stepPreset?: StepPresetKey;
-  onStepPresetChange?: (preset: StepPresetKey) => void;
+  slowMoSpeed?: number;
+  onSlowMoSpeedChange?: (speed: number) => void;
+  isSlowMo?: boolean;
+  onToggleSlowMo?: () => void;
   holdTickRateMs?: number;
   onHoldTickRateMsChange?: (ms: number) => void;
   scrubber?: ScrubberControls;
   children?: React.ReactNode;
-};
-
-const STEP_LABELS: Record<StepPresetKey, string> = {
-  fine: "Fine",
-  medium: "Medium",
-  coarse: "Coarse",
 };
 
 export function ControlBar({
@@ -42,8 +37,10 @@ export function ControlBar({
   controller,
   speed = 1,
   onSpeedChange,
-  stepPreset = "medium",
-  onStepPresetChange,
+  slowMoSpeed = SLOW_MO_SPEED.default,
+  onSlowMoSpeedChange,
+  isSlowMo = false,
+  onToggleSlowMo,
   holdTickRateMs = HOLD_TICK_RATE_MS.default,
   onHoldTickRateMsChange,
   scrubber,
@@ -108,19 +105,20 @@ export function ControlBar({
             >
               {controller?.isPlaying ? "Pause" : "Play"}
             </button>
-            {canControl && rates.length > 0 && (
-              <select
-                value={speed}
-                onChange={(e) => handleSpeedChange(Number(e.target.value))}
-                className="rounded border border-zinc-300 bg-white px-2 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                aria-label="Playback speed"
+            {canControl && (
+              <button
+                type="button"
+                onClick={onToggleSlowMo}
+                className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                  isSlowMo
+                    ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
+                    : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
+                } disabled:opacity-50`}
+                disabled={!canControl}
+                aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
               >
-                {rates.map((r) => (
-                  <option key={r} value={r}>
-                    {r}×
-                  </option>
-                ))}
-              </select>
+                {isSlowMo ? `${slowMoSpeed}× Slow` : "1× Normal"}
+              </button>
             )}
             {canControl && (
               <span
@@ -130,38 +128,8 @@ export function ControlBar({
                 {formatTime(controller?.currentTime ?? 0)}
               </span>
             )}
-            {canControl && scrubber && onStepPresetChange && (
+            {canControl && scrubber && (
               <>
-                <select
-                  value={stepPreset}
-                  onChange={(e) => onStepPresetChange(e.target.value as StepPresetKey)}
-                  className="rounded border border-zinc-300 bg-white px-2 py-2.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                  aria-label="Step size"
-                >
-                  {(Object.keys(STEP_PRESETS) as StepPresetKey[]).map((key) => (
-                    <option key={key} value={key}>
-                      {STEP_LABELS[key]}
-                    </option>
-                  ))}
-                </select>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={scrubber.stepBack}
-                    className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                    aria-label="Step backward"
-                  >
-                    −
-                  </button>
-                  <button
-                    type="button"
-                    onClick={scrubber.stepForward}
-                    className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                    aria-label="Step forward"
-                  >
-                    +
-                  </button>
-                </div>
                 {scrubber.jumpAmounts.map((sec) => (
                   <div key={sec} className="flex items-center gap-0.5">
                     <button
@@ -216,20 +184,6 @@ export function ControlBar({
                     Forward
                   </button>
                 </div>
-                {onHoldTickRateMsChange && (
-                  <label className="flex items-center gap-1 text-sm">
-                    <span className="text-zinc-600 dark:text-zinc-400">Hold tick (ms):</span>
-                    <input
-                      type="number"
-                      min={HOLD_TICK_RATE_MS.min}
-                      max={HOLD_TICK_RATE_MS.max}
-                      value={holdTickRateMs}
-                      onChange={(e) => onHoldTickRateMsChange(Number(e.target.value))}
-                      className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                      aria-label="Hold scrub tick rate (ms)"
-                    />
-                  </label>
-                )}
               </>
             )}
             {!controller?.ready && !disabled && (
