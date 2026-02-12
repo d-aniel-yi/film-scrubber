@@ -14,7 +14,7 @@ export function useScrubberControls(
   const stepSize = STEP_PRESETS[stepPreset];
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const wasPlayingRef = useRef(false);
-  const [isHolding, setIsHolding] = useState(false);
+  const [holdDirection, setHoldDirection] = useState<"rewind" | "forward" | null>(null);
 
   const clearHold = useCallback(() => {
     if (holdIntervalRef.current) {
@@ -29,7 +29,7 @@ export function useScrubberControls(
       controller.play();
     }
     wasPlayingRef.current = false;
-    setIsHolding(false);
+    setHoldDirection(null);
   }, [clearHold, controller]);
 
   const step = useCallback(
@@ -59,7 +59,7 @@ export function useScrubberControls(
     clearHold();
     wasPlayingRef.current = controller.isPlaying;
     controller.pause();
-    setIsHolding(true);
+    setHoldDirection("rewind");
     holdIntervalRef.current = setInterval(() => {
       const t = controller.getCurrentTime();
       const next = Math.max(0, t - stepSize);
@@ -72,7 +72,7 @@ export function useScrubberControls(
     clearHold();
     wasPlayingRef.current = controller.isPlaying;
     controller.pause();
-    setIsHolding(true);
+    setHoldDirection("forward");
     holdIntervalRef.current = setInterval(() => {
       const t = controller.getCurrentTime();
       const next = t + stepSize;
@@ -90,6 +90,6 @@ export function useScrubberControls(
     stopHold,
     stepSize,
     jumpAmounts: JUMP_AMOUNTS,
-    isHolding,
+    holdDirection,
   };
 }
