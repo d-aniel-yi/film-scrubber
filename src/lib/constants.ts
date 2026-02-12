@@ -3,13 +3,11 @@
  * All components and hooks import from here.
  */
 
-export const STEP_PRESETS = {
-  fine: 0.033,
-  medium: 0.05,
-  coarse: 0.1,
+export const SLOW_MO_SPEED = {
+  default: 0.25,
+  min: 0.1,
+  max: 0.75,
 } as const;
-
-export type StepPresetKey = keyof typeof STEP_PRESETS;
 
 export const JUMP_AMOUNTS = [1, 5, 10] as const; // seconds
 
