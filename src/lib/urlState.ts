@@ -39,12 +39,12 @@ export function buildSearchParams(state: {
 
 export function applyUrlStateToSettings(
   urlState: ScrubberUrlState
-): Partial<{ videoId: string; seekTime: number; speed: number; slowMoSpeed: number; scrubSpeedMultiplier: number }> {
-  const out: Partial<{ videoId: string; seekTime: number; speed: number; slowMoSpeed: number; scrubSpeedMultiplier: number }> = {};
+): Partial<{ videoId: string; seekTime: number; speed: number; slowMoSpeed: number; scrubSpeedFast: number }> {
+  const out: Partial<{ videoId: string; seekTime: number; speed: number; slowMoSpeed: number; scrubSpeedFast: number }> = {};
   if (urlState.v) out.videoId = urlState.v;
   if (urlState.t != null && Number.isFinite(urlState.t)) out.seekTime = urlState.t;
   if (urlState.speed != null && Number.isFinite(urlState.speed)) out.speed = urlState.speed;
   if (urlState.slowMo != null && Number.isFinite(urlState.slowMo)) out.slowMoSpeed = urlState.slowMo;
-  if (urlState.scrubSpeed != null && Number.isFinite(urlState.scrubSpeed)) out.scrubSpeedMultiplier = urlState.scrubSpeed;
+  if (urlState.scrubSpeed != null && Number.isFinite(urlState.scrubSpeed)) out.scrubSpeedFast = urlState.scrubSpeed;
   return out;
 }

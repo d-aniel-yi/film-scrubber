@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { YouTubePlayerController } from "@/types/player";
-import { SLOW_MO_SPEED, SCRUB_SPEED_MULTIPLIER } from "@/lib/constants";
+import { SLOW_MO_SPEED, SCRUB_SPEED } from "@/lib/constants";
 import { formatTime } from "@/lib/time";
 
 type ScrubberControls = {
@@ -10,9 +10,11 @@ type ScrubberControls = {
   jumpForward: (seconds: number) => void;
   startHoldRewind: () => void;
   startHoldForward: () => void;
+  startHoldRewindFast: () => void;
+  startHoldForwardFast: () => void;
   stopHold: () => void;
   jumpAmounts: readonly number[];
-  holdDirection: "rewind" | "forward" | null;
+  holdDirection: "rewind" | "forward" | "rewind-fast" | "forward-fast" | null;
 };
 
 type ControlBarProps = {
@@ -24,8 +26,8 @@ type ControlBarProps = {
   onSlowMoSpeedChange?: (speed: number) => void;
   isSlowMo?: boolean;
   onToggleSlowMo?: () => void;
-  scrubSpeedMultiplier?: number;
-  onScrubSpeedMultiplierChange?: (mult: number) => void;
+  scrubSpeedFast?: number;
+  onScrubSpeedFastChange?: (mult: number) => void;
   scrubber?: ScrubberControls;
   children?: React.ReactNode;
 };
@@ -39,8 +41,8 @@ export function ControlBar({
   onSlowMoSpeedChange,
   isSlowMo = false,
   onToggleSlowMo,
-  scrubSpeedMultiplier = SCRUB_SPEED_MULTIPLIER.default,
-  onScrubSpeedMultiplierChange,
+  scrubSpeedFast = SCRUB_SPEED.fast,
+  onScrubSpeedFastChange,
   scrubber,
   children,
 }: ControlBarProps) {
@@ -161,7 +163,7 @@ export function ControlBar({
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
                     } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
-                    aria-label="Hold to rewind"
+                    aria-label="Hold to rewind (1×)"
                   >
                     Rewind
                   </button>
@@ -177,25 +179,59 @@ export function ControlBar({
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
                     } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
-                    aria-label="Hold to forward"
+                    aria-label="Hold to forward (1×)"
                   >
                     Forward
                   </button>
                 </div>
-                {onScrubSpeedMultiplierChange && (
+                <div className="flex w-full gap-2 sm:w-auto">
+                  <button
+                    type="button"
+                    onPointerDown={scrubber.startHoldRewindFast}
+                    onPointerUp={scrubber.stopHold}
+                    onPointerLeave={scrubber.stopHold}
+                    onPointerCancel={scrubber.stopHold}
+                    onContextMenu={(e) => e.preventDefault()}
+                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                      scrubber.holdDirection === "rewind-fast"
+                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                    aria-label={`Hold to fast rewind (${scrubSpeedFast}×)`}
+                  >
+                    Fast Rewind
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={scrubber.startHoldForwardFast}
+                    onPointerUp={scrubber.stopHold}
+                    onPointerLeave={scrubber.stopHold}
+                    onPointerCancel={scrubber.stopHold}
+                    onContextMenu={(e) => e.preventDefault()}
+                    className={`flex-1 select-none touch-manipulation rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
+                      scrubber.holdDirection === "forward-fast"
+                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                    aria-label={`Hold to fast forward (${scrubSpeedFast}×)`}
+                  >
+                    Fast Forward
+                  </button>
+                </div>
+                {onScrubSpeedFastChange && (
                   <label className="flex items-center gap-1 text-sm">
-                    <span className="text-zinc-600 dark:text-zinc-400">Scrub speed:</span>
+                    <span className="text-zinc-600 dark:text-zinc-400">Fast scrub:</span>
                     <input
                       type="number"
-                      min={SCRUB_SPEED_MULTIPLIER.min}
-                      max={SCRUB_SPEED_MULTIPLIER.max}
+                      min={SCRUB_SPEED.min}
+                      max={SCRUB_SPEED.max}
                       step={0.5}
-                      value={scrubSpeedMultiplier}
-                      onChange={(e) => onScrubSpeedMultiplierChange(Number(e.target.value))}
+                      value={scrubSpeedFast}
+                      onChange={(e) => onScrubSpeedFastChange(Number(e.target.value))}
                       className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                      aria-label="Scrub speed multiplier"
+                      aria-label="Fast scrub speed multiplier"
                     />
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">x</span>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
                   </label>
                 )}
               </>

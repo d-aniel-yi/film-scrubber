@@ -5,16 +5,20 @@ import type { YouTubePlayerController } from "@/types/player";
 import { JUMP_AMOUNTS } from "@/lib/constants";
 import { jumpTime } from "@/lib/time";
 
+type HoldDirection = "rewind" | "forward" | "rewind-fast" | "forward-fast" | null;
+
+const SEEK_THROTTLE_MS = 100;
+
 export function useScrubberControls(
   controller: YouTubePlayerController | null,
-  scrubSpeedMultiplier: number
+  scrubSpeedFast: number
 ) {
   const rafIdRef = useRef<number | null>(null);
   const holdStartTimeRef = useRef<number | null>(null);
   const videoStartTimeRef = useRef<number | null>(null);
   const lastSeekTimeRef = useRef<number>(0);
   const wasPlayingRef = useRef(false);
-  const [holdDirection, setHoldDirection] = useState<"rewind" | "forward" | null>(null);
+  const [holdDirection, setHoldDirection] = useState<HoldDirection>(null);
 
   const clearHold = useCallback(() => {
     if (rafIdRef.current) {
@@ -45,72 +49,55 @@ export function useScrubberControls(
     [controller]
   );
 
-  const startHoldRewind = useCallback(() => {
-    if (!controller?.ready) return;
-    clearHold();
-    wasPlayingRef.current = controller.isPlaying;
-    controller.pause();
-    setHoldDirection("rewind");
+  const startHold = useCallback(
+    (direction: HoldDirection, multiplier: number) => {
+      if (!controller?.ready || !direction) return;
+      clearHold();
+      wasPlayingRef.current = controller.isPlaying;
+      controller.pause();
+      setHoldDirection(direction);
 
-    const videoStart = controller.getCurrentTime();
-    videoStartTimeRef.current = videoStart;
-    holdStartTimeRef.current = performance.now();
+      const videoStart = controller.getCurrentTime();
+      const duration = controller.duration || Infinity;
+      const isRewind = direction === "rewind" || direction === "rewind-fast";
 
-    const SEEK_THROTTLE_MS = 100;
+      videoStartTimeRef.current = videoStart;
+      holdStartTimeRef.current = performance.now();
+      lastSeekTimeRef.current = 0;
 
-    const scrub = () => {
-      if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
+      const scrub = () => {
+        if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
 
-      const now = performance.now();
-      if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
-        const elapsed = (now - holdStartTimeRef.current) / 1000;
-        const targetTime = Math.max(0, videoStartTimeRef.current - (elapsed * scrubSpeedMultiplier));
-        controller.seekTo(targetTime);
-        lastSeekTimeRef.current = now;
-      }
+        const now = performance.now();
+        if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
+          const elapsed = (now - holdStartTimeRef.current) / 1000;
+          const delta = elapsed * multiplier;
+          const targetTime = isRewind
+            ? Math.max(0, videoStartTimeRef.current - delta)
+            : Math.min(duration, videoStartTimeRef.current + delta);
+          controller.seekTo(targetTime);
+          lastSeekTimeRef.current = now;
+        }
+        rafIdRef.current = requestAnimationFrame(scrub);
+      };
+
       rafIdRef.current = requestAnimationFrame(scrub);
-    };
+    },
+    [controller, clearHold]
+  );
 
-    lastSeekTimeRef.current = 0;
-    rafIdRef.current = requestAnimationFrame(scrub);
-  }, [controller, scrubSpeedMultiplier, clearHold]);
-
-  const startHoldForward = useCallback(() => {
-    if (!controller?.ready) return;
-    clearHold();
-    wasPlayingRef.current = controller.isPlaying;
-    controller.pause();
-    setHoldDirection("forward");
-
-    const videoStart = controller.getCurrentTime();
-    const duration = controller.duration || Infinity;
-    videoStartTimeRef.current = videoStart;
-    holdStartTimeRef.current = performance.now();
-
-    const SEEK_THROTTLE_MS = 100;
-
-    const scrub = () => {
-      if (!controller?.ready || holdStartTimeRef.current === null || videoStartTimeRef.current === null) return;
-
-      const now = performance.now();
-      if (now - lastSeekTimeRef.current >= SEEK_THROTTLE_MS) {
-        const elapsed = (now - holdStartTimeRef.current) / 1000;
-        const targetTime = Math.min(duration, videoStartTimeRef.current + (elapsed * scrubSpeedMultiplier));
-        controller.seekTo(targetTime);
-        lastSeekTimeRef.current = now;
-      }
-      rafIdRef.current = requestAnimationFrame(scrub);
-    };
-
-    lastSeekTimeRef.current = 0;
-    rafIdRef.current = requestAnimationFrame(scrub);
-  }, [controller, scrubSpeedMultiplier, clearHold]);
+  const startHoldRewind = useCallback(() => startHold("rewind", 1), [startHold]);
+  const startHoldForward = useCallback(() => startHold("forward", 1), [startHold]);
+  const startHoldRewindFast = useCallback(() => startHold("rewind-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
+  const startHoldForwardFast = useCallback(() => startHold("forward-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
 
   return {
     jumpBack: (seconds: number) => jump(-seconds),
     jumpForward: (seconds: number) => jump(seconds),
     startHoldRewind,
     startHoldForward,
+    startHoldRewindFast,
+    startHoldForwardFast,
     stopHold,
     jumpAmounts: JUMP_AMOUNTS,
     holdDirection,
