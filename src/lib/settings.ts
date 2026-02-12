@@ -3,14 +3,14 @@
  */
 
 import type { ScrubberSettings } from "@/types/player";
-import { SLOW_MO_SPEED, HOLD_TICK_RATE_MS } from "@/lib/constants";
+import { SLOW_MO_SPEED, SCRUB_SPEED_MULTIPLIER } from "@/lib/constants";
 
 const STORAGE_KEY = "film-scrubber-settings";
 
 const DEFAULT_SETTINGS: ScrubberSettings = {
   speed: 1,
   slowMoSpeed: SLOW_MO_SPEED.default,
-  holdTickRateMs: HOLD_TICK_RATE_MS.default,
+  scrubSpeedMultiplier: SCRUB_SPEED_MULTIPLIER.default,
 };
 
 export function loadSettings(): ScrubberSettings {
@@ -23,10 +23,10 @@ export function loadSettings(): ScrubberSettings {
     const slowMoSpeed = typeof parsed.slowMoSpeed === "number"
       ? Math.max(SLOW_MO_SPEED.min, Math.min(SLOW_MO_SPEED.max, parsed.slowMoSpeed))
       : DEFAULT_SETTINGS.slowMoSpeed;
-    const holdTickRateMs = typeof parsed.holdTickRateMs === "number"
-      ? Math.max(HOLD_TICK_RATE_MS.min, Math.min(HOLD_TICK_RATE_MS.max, parsed.holdTickRateMs))
-      : DEFAULT_SETTINGS.holdTickRateMs;
-    return { speed, slowMoSpeed, holdTickRateMs };
+    const scrubSpeedMultiplier = typeof parsed.scrubSpeedMultiplier === "number"
+      ? Math.max(SCRUB_SPEED_MULTIPLIER.min, Math.min(SCRUB_SPEED_MULTIPLIER.max, parsed.scrubSpeedMultiplier))
+      : DEFAULT_SETTINGS.scrubSpeedMultiplier;
+    return { speed, slowMoSpeed, scrubSpeedMultiplier };
   } catch {
     return DEFAULT_SETTINGS;
   }

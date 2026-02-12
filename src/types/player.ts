@@ -26,7 +26,7 @@ export interface YouTubePlayerController {
 export interface ScrubberSettings {
   speed: number;
   slowMoSpeed: number;
-  holdTickRateMs: number;
+  scrubSpeedMultiplier: number;
 }
 
 /** Shape of URL search params for Phase 7 deep linking. */
@@ -35,5 +35,5 @@ export interface ScrubberUrlState {
   t?: number; // current time (seconds)
   speed?: number;
   slowMo?: number; // slow-mo speed
-  holdTick?: number; // hold tick rate ms
+  scrubSpeed?: number; // scrub speed multiplier
 }

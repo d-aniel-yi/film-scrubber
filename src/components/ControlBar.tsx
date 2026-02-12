@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { YouTubePlayerController } from "@/types/player";
-import { SLOW_MO_SPEED, HOLD_TICK_RATE_MS } from "@/lib/constants";
+import { SLOW_MO_SPEED, SCRUB_SPEED_MULTIPLIER } from "@/lib/constants";
 import { formatTime } from "@/lib/time";
 
 type ScrubberControls = {
-  stepBack: () => void;
-  stepForward: () => void;
   jumpBack: (seconds: number) => void;
   jumpForward: (seconds: number) => void;
   startHoldRewind: () => void;
@@ -26,8 +24,8 @@ type ControlBarProps = {
   onSlowMoSpeedChange?: (speed: number) => void;
   isSlowMo?: boolean;
   onToggleSlowMo?: () => void;
-  holdTickRateMs?: number;
-  onHoldTickRateMsChange?: (ms: number) => void;
+  scrubSpeedMultiplier?: number;
+  onScrubSpeedMultiplierChange?: (mult: number) => void;
   scrubber?: ScrubberControls;
   children?: React.ReactNode;
 };
@@ -41,8 +39,8 @@ export function ControlBar({
   onSlowMoSpeedChange,
   isSlowMo = false,
   onToggleSlowMo,
-  holdTickRateMs = HOLD_TICK_RATE_MS.default,
-  onHoldTickRateMsChange,
+  scrubSpeedMultiplier = SCRUB_SPEED_MULTIPLIER.default,
+  onScrubSpeedMultiplierChange,
   scrubber,
   children,
 }: ControlBarProps) {
@@ -184,6 +182,22 @@ export function ControlBar({
                     Forward
                   </button>
                 </div>
+                {onScrubSpeedMultiplierChange && (
+                  <label className="flex items-center gap-1 text-sm">
+                    <span className="text-zinc-600 dark:text-zinc-400">Scrub speed:</span>
+                    <input
+                      type="number"
+                      min={SCRUB_SPEED_MULTIPLIER.min}
+                      max={SCRUB_SPEED_MULTIPLIER.max}
+                      step={0.5}
+                      value={scrubSpeedMultiplier}
+                      onChange={(e) => onScrubSpeedMultiplierChange(Number(e.target.value))}
+                      className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                      aria-label="Scrub speed multiplier"
+                    />
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">x</span>
+                  </label>
+                )}
               </>
             )}
             {!controller?.ready && !disabled && (
