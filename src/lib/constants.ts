@@ -11,11 +11,11 @@ export const SLOW_MO_SPEED = {
 
 export const JUMP_AMOUNTS = [1, 5, 10] as const; // seconds
 
-/** Default hold-to-scrub tick interval (ms). User-configurable; min/max for UI. */
-export const HOLD_TICK_RATE_MS = {
-  default: 70,
-  min: 40,
-  max: 150,
+/** Scrub speed multiplier: 2x means 1 real second scrubs 2 video seconds. */
+export const SCRUB_SPEED_MULTIPLIER = {
+  default: 2,
+  min: 0.5,
+  max: 10,
 } as const;
 
 export const KEYBOARD_MAP = {
