@@ -47,10 +47,12 @@ Plans:
   5. User can hold forward button to scrub forward continuously
   6. Scrubbing feels smooth and consistent in both directions (no visible stutter)
   7. User can jump backward/forward by 1s, 5s, or 10s with dedicated buttons
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD during planning
+- [ ] 02-01-PLAN.md — Remove step presets, add slow-mo toggle and jump buttons
+- [ ] 02-02-PLAN.md — Replace setInterval scrubbing with RAF-based smooth scrubbing
+- [ ] 02-03-PLAN.md — Human verification of playback and scrubbing functionality
 
 ### Phase 3: Film Clicker Layout
 **Goal**: Controls reorganized into film-clicker style with keyboard shortcuts matching film editing workflows
