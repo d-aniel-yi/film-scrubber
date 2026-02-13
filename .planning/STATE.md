@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 4 (Film Clicker Layout)
-Plan: 2 of TBD in phase
+Plan: 3 of TBD in phase
 Status: In progress
-Last activity: 2026-02-13 - Completed 03-02-PLAN.md
+Last activity: 2026-02-13 - Completed 03-03-PLAN.md
 
-Progress: [███████░░░] 70%
+Progress: [███████░░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 14 min
-- Total execution time: 1.5 hours
+- Total plans completed: 7
+- Average duration: 13 min
+- Total execution time: 1.6 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [███████░░░] 70%
 |-------|-------|-------|----------|
 | 01-touch-native-foundation | 2/2 | 60 min | 30 min |
 | 02-core-playback-scrubbing | 3/3 | 6 min | 2 min |
-| 03-film-clicker-layout | 2/TBD | 24 min | 12 min |
+| 03-film-clicker-layout | 3/TBD | 33 min | 11 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (3 min), 02-02 (3 min), 03-01 (23 min), 03-02 (1 min)
+- Last 5 plans: 02-02 (3 min), 03-01 (23 min), 03-02 (1 min), 03-03 (9 min)
 - Trend: Layout changes very fast, feature additions slower
 
 *Updated after each plan completion*
@@ -61,6 +61,9 @@ Recent decisions affecting current work:
 - Phase 3: Settings panel collapsed by default to reduce visual clutter
 - Phase 3: Settings state does NOT persist to localStorage (can be added later if needed)
 - Phase 3: Full-width settings toggle button on mobile (w-full sm:w-auto) for consistent tap target
+- Phase 3: S key for slow-mo toggle (single-key toggle pattern for frequently used setting)
+- Phase 3: Arrow keys with modifiers for jumps: no modifier = 1s, Shift = 5s, Cmd/Ctrl = 10s (progressive modifier pattern)
+- Phase 3: Reordered KEYBOARD_MAP keys to reflect common usage (playPause, pause, JKL scrubbing, slow-mo, jumps)
 
 ### Patterns Established
 
@@ -83,6 +86,9 @@ Recent decisions affecting current work:
 - Collapsible panel pattern: toggle button shows current state with ▼/▲ indicators
 - Settings panel at bottom of control bar stack for clear visual hierarchy
 - Conditional render with `settingsExpanded && (<div>...</div>)` pattern
+- Modifier key detection: check e.metaKey || e.ctrlKey for cross-platform Cmd/Ctrl handling
+- Progressive keyboard shortcuts: base key for common action, Shift for medium, Cmd/Ctrl for large
+- Callback prop pattern for keyboard shortcuts: onToggleSlowMo optional parameter in hook
 
 ### Pending Todos
 
@@ -95,5 +101,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 03-02-PLAN.md
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
