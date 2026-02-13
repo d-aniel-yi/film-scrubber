@@ -5,34 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** Controls must feel like a dedicated film room clicker — native-feeling buttons with instant response
-**Current focus:** Phase 2 in progress (Core Playback & Scrubbing)
+**Current focus:** Phase 3 next (Film Clicker Layout)
 
 ## Current Position
 
-Phase: 2 of 4 (Core Playback & Scrubbing)
-Plan: 2 of 3 in phase (complete)
+Phase: 3 of 4 (Film Clicker Layout)
+Plan: 1 of TBD in phase
 Status: In progress
-Last activity: 2026-02-12 - Completed 02-02-PLAN.md
+Last activity: 2026-02-13 - Completed 03-01-PLAN.md
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 16 min
-- Total execution time: 1.1 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-touch-native-foundation | 2/2 | 60 min | 30 min |
-| 02-core-playback-scrubbing | 2/3 | 6 min | 3 min |
+| 02-core-playback-scrubbing | 3/3 | 6 min | 2 min |
+| 03-film-clicker-layout | 1/TBD | 23 min | 23 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (8 min), 01-02 (52 min), 02-01 (3 min), 02-02 (3 min)
-- Trend: Phase 2 executing very fast (pure code changes, no UI verification)
+- Last 5 plans: 01-02 (52 min), 02-01 (3 min), 02-02 (3 min), 03-01 (23 min)
+- Trend: Layout changes faster than UI verification phases
 
 *Updated after each plan completion*
 
@@ -49,20 +50,33 @@ Recent decisions affecting current work:
 - Phase 2: Slow-mo toggle instead of speed dropdown (faster to switch during review)
 - Phase 2: Configurable forward/rewind speed multiplier (different tasks need different scrub speeds)
 - Phase 2: RAF time-based scrubbing instead of setInterval (eliminates stutter from YouTube's variable seek latency)
+- Phase 2: Dual-speed hold scrubbing (slow 1× + fast 4×) — user preferred separate buttons over single speed
+- Phase 2: seekTo-based scrubbing for all directions (play()-based forward failed on mobile)
+- Phase 2: 150ms seek throttle + 5s pre-buffer for smoother mobile rewind
+- Phase 2: YouTube IFrame API fundamentally limits mobile scrubbing smoothness — accepted limitation
+- Phase 2: Volume slider added to controller interface and ControlBar
+- Phase 3: Stacked row layout over single-row flex-wrap for clearer visual hierarchy
+- Phase 3: gap-3 between major rows for adequate visual separation on mobile
+- Phase 3: flex-1 on mobile hold buttons for equal width, sm:flex-none for desktop
 
 ### Patterns Established
 
 - All buttons must include `select-none touch-manipulation` classes
 - Minimum `py-2.5` padding on all interactive elements for 44px+ mobile tap targets
 - Use `touch-manipulation` (not `touch-none`) to preserve scroll while disabling double-tap zoom
+- Hold buttons use `touch-none` (not `touch-manipulation`) with `e.preventDefault()` on pointerdown — required for mobile hold gestures
 - `active:scale-95 active:bg-*` on all interactive buttons for press feedback
-- `holdDirection: "rewind" | "forward" | null` for per-button hold state tracking
+- `holdDirection: "rewind" | "forward" | "rewind-fast" | "forward-fast" | null` for per-button hold state tracking
 - Conditional template literal className for state-dependent styling on hold buttons
 - Amber colors (bg-amber-600/500) for slow-mo active state to distinguish from normal playback
 - slowMoSpeed persisted in localStorage and URL state (query param: slowMo)
 - RAF time-based scrubbing pattern: `targetTime = startTime ± (elapsed × multiplier)`
 - Capture video start time and wall-clock start time at hold start, calculate target position each RAF tick
-- scrubSpeedMultiplier persisted in localStorage and URL state (query param: scrubSpeed)
+- scrubSpeedFast persisted in localStorage and URL state (query param: scrubSpeed)
+- Generic `startHold(direction, multiplier)` pattern to reduce duplication for multiple hold button variants
+- Film clicker hierarchy: seek bar → play/toggle → hold (slow) → hold (fast) → jumps → settings
+- Each functional group gets its own row for muscle memory and spatial consistency
+- Mobile buttons span full width for maximum tap target size (flex-1, sm:flex-none)
 
 ### Pending Todos
 
@@ -74,6 +88,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-12 (plan 02-02 execution)
-Stopped at: Completed 02-02-PLAN.md (RAF-based smooth scrubbing)
+Last session: 2026-02-13
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
