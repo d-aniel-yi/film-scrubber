@@ -8,6 +8,8 @@ type ScrubberForKeyboard = {
   startHoldRewind: () => void;
   startHoldForward: () => void;
   stopHold: () => void;
+  jumpBack: (seconds: number) => void;
+  jumpForward: (seconds: number) => void;
 };
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -21,7 +23,8 @@ function isTypingTarget(target: EventTarget | null): boolean {
 export function useKeyboardShortcuts(
   enabled: boolean,
   controller: YouTubePlayerController | null,
-  scrubber: ScrubberForKeyboard | null
+  scrubber: ScrubberForKeyboard | null,
+  onToggleSlowMo?: () => void
 ) {
   useEffect(() => {
     if (!enabled || !controller?.ready) return;
@@ -55,6 +58,38 @@ export function useKeyboardShortcuts(
         scrubber?.startHoldForward();
         return;
       }
+
+      if (key === KEYBOARD_MAP.toggleSlowMo) {
+        e.preventDefault();
+        onToggleSlowMo?.();
+        return;
+      }
+
+      // Arrow Left: -1s (no modifier), -5s (Shift), -10s (Cmd/Ctrl)
+      if (key === KEYBOARD_MAP.jumpBack1) {
+        e.preventDefault();
+        if (e.metaKey || e.ctrlKey) {
+          scrubber?.jumpBack(10);
+        } else if (e.shiftKey) {
+          scrubber?.jumpBack(5);
+        } else {
+          scrubber?.jumpBack(1);
+        }
+        return;
+      }
+
+      // Arrow Right: +1s (no modifier), +5s (Shift), +10s (Cmd/Ctrl)
+      if (key === KEYBOARD_MAP.jumpForward1) {
+        e.preventDefault();
+        if (e.metaKey || e.ctrlKey) {
+          scrubber?.jumpForward(10);
+        } else if (e.shiftKey) {
+          scrubber?.jumpForward(5);
+        } else {
+          scrubber?.jumpForward(1);
+        }
+        return;
+      }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -71,5 +106,5 @@ export function useKeyboardShortcuts(
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [enabled, controller, scrubber]);
+  }, [enabled, controller, scrubber, onToggleSlowMo]);
 }

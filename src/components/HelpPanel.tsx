@@ -31,10 +31,16 @@ export function HelpPanel() {
         <p className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">Keyboard shortcuts (desktop):</p>
         <ul className="list-inside list-disc space-y-0.5">
           <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">{KEYBOARD_MAP.playPause === " " ? "Space" : KEYBOARD_MAP.playPause}</kbd> Play / Pause</li>
-          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">J</kbd> Hold to rewind</li>
           <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">K</kbd> Pause</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">J</kbd> Hold to rewind</li>
           <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">L</kbd> Hold to forward</li>
-          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">←</kbd> <kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">→</kbd> Step back / forward</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">S</kbd> Toggle slow-mo</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">←</kbd> Jump -1s</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">Shift+←</kbd> Jump -5s</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">Cmd/Ctrl+←</kbd> Jump -10s</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">→</kbd> Jump +1s</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">Shift+→</kbd> Jump +5s</li>
+          <li><kbd className="rounded bg-zinc-200 px-1 dark:bg-zinc-600">Cmd/Ctrl+→</kbd> Jump +10s</li>
         </ul>
       </div>
     </div>

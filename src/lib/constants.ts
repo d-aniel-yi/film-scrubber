@@ -21,9 +21,11 @@ export const SCRUB_SPEED = {
 
 export const KEYBOARD_MAP = {
   playPause: " ",
-  rewind: "j",
   pause: "k",
+  rewind: "j",
   forward: "l",
-  stepBack: "ArrowLeft",
-  stepForward: "ArrowRight",
+  toggleSlowMo: "s",
+  jumpBack1: "ArrowLeft",
+  jumpForward1: "ArrowRight",
+  // 5s and 10s jumps use modifiers (Shift and Cmd/Ctrl) with arrow keys
 } as const;

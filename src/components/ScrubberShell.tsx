@@ -51,7 +51,8 @@ export function ScrubberShell() {
   useKeyboardShortcuts(
     Boolean(videoId && controller.ready),
     videoId ? controller : null,
-    scrubber
+    scrubber,
+    toggleSlowMo
   );
 
   const toggleSlowMo = () => {
