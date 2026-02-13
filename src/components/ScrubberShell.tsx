@@ -48,12 +48,6 @@ export function ScrubberShell() {
     videoId ? controller : null,
     scrubSpeedFast
   );
-  useKeyboardShortcuts(
-    Boolean(videoId && controller.ready),
-    videoId ? controller : null,
-    scrubber,
-    toggleSlowMo
-  );
 
   const toggleSlowMo = () => {
     const newIsSlowMo = !isSlowMo;
@@ -62,6 +56,13 @@ export function ScrubberShell() {
     setSpeed(newSpeed);
     controller.setPlaybackRate(newSpeed);
   };
+
+  useKeyboardShortcuts(
+    Boolean(videoId && controller.ready),
+    videoId ? controller : null,
+    scrubber,
+    toggleSlowMo
+  );
 
   useEffect(() => {
     if (!videoId || !controller.ready || hasSeekedFromUrlRef.current) return;
