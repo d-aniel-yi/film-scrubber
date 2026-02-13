@@ -22,6 +22,7 @@ export function ScrubberShell() {
   const [isSlowMo, setIsSlowMo] = useState(false);
   const [scrubSpeedFast, setScrubSpeedFast] = useState<number>(SCRUB_SPEED.fast);
   const [speed, setSpeed] = useState(1);
+  const [settingsExpanded, setSettingsExpanded] = useState(false);
   const urlUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasSeekedFromUrlRef = useRef(false);
 
@@ -135,6 +136,8 @@ export function ScrubberShell() {
         scrubSpeedFast={scrubSpeedFast}
         onScrubSpeedFastChange={setScrubSpeedFast}
         scrubber={scrubber}
+        settingsExpanded={settingsExpanded}
+        onSettingsExpandedChange={setSettingsExpanded}
       />
       <HelpPanel />
     </div>
