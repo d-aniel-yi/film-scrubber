@@ -13,7 +13,7 @@ Transform the existing YouTube scrubber into a native-feeling film clicker throu
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Touch-Native Foundation** - Buttons feel like native app controls, not tappable web text
-- [ ] **Phase 2: Core Playback & Scrubbing** - Users can play, seek, jump, and hold-to-scrub through video
+- [x] **Phase 2: Core Playback & Scrubbing** - Users can play, seek, jump, and hold-to-scrub through video
 - [ ] **Phase 3: Film Clicker Layout** - Controls reorganized into film-clicker style with keyboard shortcuts
 - [ ] **Phase 4: Testing & Validation** - Bug-free, smooth experience validated across devices
 
@@ -50,9 +50,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Remove step presets, add slow-mo toggle and jump buttons
-- [ ] 02-02-PLAN.md — Replace setInterval scrubbing with RAF-based smooth scrubbing
-- [ ] 02-03-PLAN.md — Human verification of playback and scrubbing functionality
+- [x] 02-01-PLAN.md — Remove step presets, add slow-mo toggle and jump buttons
+- [x] 02-02-PLAN.md — Replace setInterval scrubbing with RAF-based smooth scrubbing
+- [x] 02-03-PLAN.md — Human verification of playback and scrubbing functionality
 
 ### Phase 3: Film Clicker Layout
 **Goal**: Controls reorganized into film-clicker style with keyboard shortcuts matching film editing workflows
@@ -64,10 +64,13 @@ Plans:
   3. Settings panel collapses/expands via toggle button
   4. User can adjust slow-mo speed, scrub speed, and playback speed in settings panel
   5. User can trigger all main controls via keyboard shortcuts (play/pause, jumps, slow-mo toggle)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: TBD during planning
+- [ ] 03-01-PLAN.md — Reorganize ControlBar into stacked row layout (seek bar → play/toggle → hold → jump)
+- [ ] 03-02-PLAN.md — Add collapsible settings panel with toggle button
+- [ ] 03-03-PLAN.md — Update keyboard shortcuts for film clicker controls (S for slow-mo, modified arrows for jumps)
+- [ ] 03-04-PLAN.md — Human verification of layout, settings panel, and keyboard shortcuts
 
 ### Phase 4: Testing & Validation
 **Goal**: Bug-free, smooth experience validated across mobile and desktop devices
@@ -92,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Touch-Native Foundation | 2/2 | Complete | 2026-02-12 |
-| 2. Core Playback & Scrubbing | 0/TBD | Not started | - |
-| 3. Film Clicker Layout | 0/TBD | Not started | - |
+| 2. Core Playback & Scrubbing | 3/3 | Complete | 2026-02-12 |
+| 3. Film Clicker Layout | 0/4 | Planning complete | - |
 | 4. Testing & Validation | 0/TBD | Not started | - |
