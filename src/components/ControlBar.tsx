@@ -128,6 +128,20 @@ export function ControlBar({
                 {formatTime(controller?.currentTime ?? 0)}
               </span>
             )}
+            {canControl && (
+              <label className="flex items-center gap-1.5">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Vol</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={controller?.volume ?? 100}
+                  onChange={(e) => controller?.setVolume(Number(e.target.value))}
+                  className="h-1.5 w-20 cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-zinc-800 dark:bg-zinc-700 dark:accent-zinc-200"
+                  aria-label="Volume"
+                />
+              </label>
+            )}
             {canControl && scrubber && (
               <>
                 {scrubber.jumpAmounts.map((sec) => (

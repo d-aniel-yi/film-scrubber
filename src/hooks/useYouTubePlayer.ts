@@ -38,6 +38,7 @@ export function useYouTubePlayer(videoId: string | null) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(100);
 
   const controller: YouTubePlayerController = {
     play: useCallback(() => playerRef.current?.playVideo(), []),
@@ -53,11 +54,17 @@ export function useYouTubePlayer(videoId: string | null) {
       () => playerRef.current?.getAvailablePlaybackRates() ?? [],
       []),
     getPlayerState: useCallback(() => playerRef.current?.getPlayerState() ?? -1, []),
+    setVolume: useCallback((vol: number) => {
+      playerRef.current?.setVolume(vol);
+      setVolume(vol);
+    }, []),
+    getVolume: useCallback(() => playerRef.current?.getVolume() ?? 100, []),
     ready,
     loading,
     currentTime,
     duration,
     isPlaying,
+    volume,
   };
 
   // Time polling: ~5–10/sec when ready

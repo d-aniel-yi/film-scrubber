@@ -43,6 +43,11 @@ export interface YTPlayerInstance {
   getAvailablePlaybackRates: () => number[];
   getDuration: () => number;
   getPlayerState: () => number; // 1=playing, 2=paused, etc.
+  getVolume: () => number; // 0–100
+  setVolume: (volume: number) => void;
+  isMuted: () => boolean;
+  mute: () => void;
+  unMute: () => void;
   destroy: () => void;
 }
 

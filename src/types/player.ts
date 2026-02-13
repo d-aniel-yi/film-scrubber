@@ -12,6 +12,8 @@ export interface YouTubePlayerController {
   getAvailablePlaybackRates: () => number[];
   /** 1=playing, 2=paused, 3=buffering, 5=cued, 0=unstarted, -1=ended */
   getPlayerState: () => number;
+  setVolume: (volume: number) => void;
+  getVolume: () => number;
   ready: boolean;
   loading: boolean;
   /** Current time in seconds (updated by polling). */
@@ -20,6 +22,8 @@ export interface YouTubePlayerController {
   duration: number;
   /** True when state is playing. */
   isPlaying: boolean;
+  /** Volume 0–100 (updated by polling). */
+  volume: number;
 }
 
 /** Shape of settings persisted in localStorage. */
