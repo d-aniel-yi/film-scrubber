@@ -90,81 +90,76 @@ export function ControlBar({
         </div>
       )}
       <div
-        className="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50 [&_button]:min-h-10 [&_select]:min-h-10"
+        className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50 [&_button]:min-h-10 [&_select]:min-h-10"
         role="group"
         aria-label="Playback controls"
       >
         {children ?? (
           <>
-            <button
-              type="button"
-              disabled={!canControl}
-              onClick={togglePlayPause}
-              className="select-none touch-manipulation rounded bg-zinc-800 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800 dark:active:bg-zinc-100"
-              aria-label={controller?.isPlaying ? "Pause" : "Play"}
-            >
-              {controller?.isPlaying ? "Pause" : "Play"}
-            </button>
-            {canControl && (
+            {/* Play/Toggle Row */}
+            <div className="flex w-full flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={onToggleSlowMo}
-                className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                  isSlowMo
-                    ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
-                    : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
-                } disabled:opacity-50`}
                 disabled={!canControl}
-                aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
+                onClick={togglePlayPause}
+                className="select-none touch-manipulation rounded bg-zinc-800 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800 dark:active:bg-zinc-100"
+                aria-label={controller?.isPlaying ? "Pause" : "Play"}
               >
-                {isSlowMo ? `${slowMoSpeed}× Slow` : "1× Normal"}
+                {controller?.isPlaying ? "Pause" : "Play"}
               </button>
-            )}
-            {canControl && (
-              <span
-                className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-300"
-                aria-label="Current time"
-              >
-                {formatTime(controller?.currentTime ?? 0)}
-              </span>
-            )}
-            {canControl && (
-              <label className="flex items-center gap-1.5">
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">Vol</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={controller?.volume ?? 100}
-                  onChange={(e) => controller?.setVolume(Number(e.target.value))}
-                  className="h-1.5 w-20 cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-zinc-800 dark:bg-zinc-700 dark:accent-zinc-200"
-                  aria-label="Volume"
-                />
-              </label>
-            )}
+              {canControl && (
+                <button
+                  type="button"
+                  onClick={onToggleSlowMo}
+                  className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                    isSlowMo
+                      ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
+                      : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
+                  } disabled:opacity-50`}
+                  disabled={!canControl}
+                  aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
+                >
+                  {isSlowMo ? `${slowMoSpeed}× Slow` : "1× Normal"}
+                </button>
+              )}
+              {canControl && (
+                <span
+                  className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-300"
+                  aria-label="Current time"
+                >
+                  {formatTime(controller?.currentTime ?? 0)}
+                </span>
+              )}
+              {canControl && (
+                <label className="flex items-center gap-1.5">
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">Vol</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={controller?.volume ?? 100}
+                    onChange={(e) => controller?.setVolume(Number(e.target.value))}
+                    className="h-1.5 w-20 cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-zinc-800 dark:bg-zinc-700 dark:accent-zinc-200"
+                    aria-label="Volume"
+                  />
+                </label>
+              )}
+              {!controller?.ready && !disabled && (
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Loading player…
+                </span>
+              )}
+              {disabled && (
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Load a video to enable controls
+                </span>
+              )}
+            </div>
+
             {canControl && scrubber && (
               <>
-                {scrubber.jumpAmounts.map((sec) => (
-                  <div key={sec} className="flex items-center gap-0.5">
-                    <button
-                      type="button"
-                      onClick={() => scrubber.jumpBack(sec)}
-                      className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                      aria-label={`Jump back ${sec}s`}
-                    >
-                      −{sec}s
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrubber.jumpForward(sec)}
-                      className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                      aria-label={`Jump forward ${sec}s`}
-                    >
-                      +{sec}s
-                    </button>
-                  </div>
-                ))}
-                <div className="flex w-full gap-2 sm:w-auto">
+                {/* Hold Buttons Row (Slow) */}
+                <div className="flex w-full gap-2">
                   <button
                     type="button"
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewind(); }}
@@ -198,7 +193,9 @@ export function ControlBar({
                     Forward
                   </button>
                 </div>
-                <div className="flex w-full gap-2 sm:w-auto">
+
+                {/* Hold Buttons Row (Fast) */}
+                <div className="flex w-full gap-2">
                   <button
                     type="button"
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewindFast(); }}
@@ -232,33 +229,51 @@ export function ControlBar({
                     Fast Forward
                   </button>
                 </div>
+
+                {/* Jump Buttons Row */}
+                <div className="flex w-full flex-wrap items-center gap-2">
+                  {scrubber.jumpAmounts.map((sec) => (
+                    <div key={sec} className="flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => scrubber.jumpBack(sec)}
+                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+                        aria-label={`Jump back ${sec}s`}
+                      >
+                        −{sec}s
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrubber.jumpForward(sec)}
+                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+                        aria-label={`Jump forward ${sec}s`}
+                      >
+                        +{sec}s
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Settings Input Row */}
                 {onScrubSpeedFastChange && (
-                  <label className="flex items-center gap-1 text-sm">
-                    <span className="text-zinc-600 dark:text-zinc-400">Fast scrub:</span>
-                    <input
-                      type="number"
-                      min={SCRUB_SPEED.min}
-                      max={SCRUB_SPEED.max}
-                      step={0.5}
-                      value={scrubSpeedFast}
-                      onChange={(e) => onScrubSpeedFastChange(Number(e.target.value))}
-                      className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                      aria-label="Fast scrub speed multiplier"
-                    />
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
-                  </label>
+                  <div className="flex w-full items-center">
+                    <label className="flex items-center gap-1 text-sm">
+                      <span className="text-zinc-600 dark:text-zinc-400">Fast scrub:</span>
+                      <input
+                        type="number"
+                        min={SCRUB_SPEED.min}
+                        max={SCRUB_SPEED.max}
+                        step={0.5}
+                        value={scrubSpeedFast}
+                        onChange={(e) => onScrubSpeedFastChange(Number(e.target.value))}
+                        className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                        aria-label="Fast scrub speed multiplier"
+                      />
+                      <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
+                    </label>
+                  </div>
                 )}
               </>
-            )}
-            {!controller?.ready && !disabled && (
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                Loading player…
-              </span>
-            )}
-            {disabled && (
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                Load a video to enable controls
-              </span>
             )}
           </>
         )}
