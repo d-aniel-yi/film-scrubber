@@ -13,7 +13,11 @@
       "Bash(npx next build:*)",
       "Bash(ls:*)",
       "Bash(echo:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Skill(gsd:plan-phase)",
+      "Skill(gsd:plan-phase:*)",
+      "Bash(del \"\\\\?\\\\h:\\\\film\\\\nul\")",
+      "Bash(powershell -Command \"Remove-Item -Path ''\\\\?\\\\h:\\\\film\\\\nul'' -Force\")"
     ]
   }
 }
