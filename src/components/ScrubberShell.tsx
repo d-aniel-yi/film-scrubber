@@ -20,6 +20,7 @@ export function ScrubberShell() {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [slowMoSpeed, setSlowMoSpeed] = useState<number>(SLOW_MO_SPEED.default);
   const [isSlowMo, setIsSlowMo] = useState(false);
+  const [scrubSpeedSlow, setScrubSpeedSlow] = useState<number>(SCRUB_SPEED.slow);
   const [scrubSpeedFast, setScrubSpeedFast] = useState<number>(SCRUB_SPEED.fast);
   const [speed, setSpeed] = useState(1);
   const [settingsExpanded, setSettingsExpanded] = useState(false);
@@ -31,6 +32,7 @@ export function ScrubberShell() {
     const urlState = parseUrlState();
     const applied = applyUrlStateToSettings(urlState);
     setSlowMoSpeed(applied.slowMoSpeed ?? s.slowMoSpeed);
+    setScrubSpeedSlow(applied.scrubSpeedSlow ?? s.scrubSpeedSlow);
     setScrubSpeedFast(applied.scrubSpeedFast ?? s.scrubSpeedFast);
     setSpeed(applied.speed ?? s.speed);
     if (applied.videoId) {
@@ -40,12 +42,13 @@ export function ScrubberShell() {
   }, []);
 
   useEffect(() => {
-    saveSettings({ speed, slowMoSpeed, scrubSpeedFast });
-  }, [speed, slowMoSpeed, scrubSpeedFast]);
+    saveSettings({ speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast });
+  }, [speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast]);
 
   const { controller, containerId } = useYouTubePlayer(videoId);
   const scrubber = useScrubberControls(
     videoId ? controller : null,
+    scrubSpeedSlow,
     scrubSpeedFast
   );
 
@@ -86,6 +89,7 @@ export function ScrubberShell() {
         t: controller.currentTime,
         speed,
         slowMoSpeed,
+        scrubSpeedSlow,
         scrubSpeed: scrubSpeedFast,
       });
       const url = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
@@ -94,7 +98,7 @@ export function ScrubberShell() {
     return () => {
       if (urlUpdateTimeoutRef.current) clearTimeout(urlUpdateTimeoutRef.current);
     };
-  }, [videoId, controller.currentTime, speed, slowMoSpeed, scrubSpeedFast]);
+  }, [videoId, controller.currentTime, speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast]);
 
   const [urlError, setUrlError] = useState<string | null>(null);
 
@@ -135,6 +139,8 @@ export function ScrubberShell() {
         onSlowMoSpeedChange={setSlowMoSpeed}
         isSlowMo={isSlowMo}
         onToggleSlowMo={toggleSlowMo}
+        scrubSpeedSlow={scrubSpeedSlow}
+        onScrubSpeedSlowChange={setScrubSpeedSlow}
         scrubSpeedFast={scrubSpeedFast}
         onScrubSpeedFastChange={setScrubSpeedFast}
         scrubber={scrubber}

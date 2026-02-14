@@ -26,6 +26,8 @@ type ControlBarProps = {
   onSlowMoSpeedChange?: (speed: number) => void;
   isSlowMo?: boolean;
   onToggleSlowMo?: () => void;
+  scrubSpeedSlow?: number;
+  onScrubSpeedSlowChange?: (mult: number) => void;
   scrubSpeedFast?: number;
   onScrubSpeedFastChange?: (mult: number) => void;
   scrubber?: ScrubberControls;
@@ -43,6 +45,8 @@ export function ControlBar({
   onSlowMoSpeedChange,
   isSlowMo = false,
   onToggleSlowMo,
+  scrubSpeedSlow = SCRUB_SPEED.slow,
+  onScrubSpeedSlowChange,
   scrubSpeedFast = SCRUB_SPEED.fast,
   onScrubSpeedFastChange,
   scrubber,
@@ -176,7 +180,7 @@ export function ControlBar({
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
                     } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
-                    aria-label="Hold to rewind (1×)"
+                    aria-label={`Hold to rewind (${scrubSpeedSlow}×)`}
                   >
                     Rewind
                   </button>
@@ -192,7 +196,7 @@ export function ControlBar({
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
                     } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
-                    aria-label="Hold to forward (1×)"
+                    aria-label={`Hold to forward (${scrubSpeedSlow}×)`}
                   >
                     Forward
                   </button>
@@ -289,9 +293,25 @@ export function ControlBar({
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
                       </label>
                     )}
-                    {onScrubSpeedFastChange && (
+                    {onScrubSpeedSlowChange && (
                       <label className="flex items-center gap-1 text-sm">
                         <span className="text-zinc-600 dark:text-zinc-400">Scrub speed:</span>
+                        <input
+                          type="number"
+                          min={SCRUB_SPEED.min}
+                          max={SCRUB_SPEED.max}
+                          step={0.5}
+                          value={scrubSpeedSlow}
+                          onChange={(e) => onScrubSpeedSlowChange(Number(e.target.value))}
+                          className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                          aria-label="Scrub speed multiplier"
+                        />
+                        <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
+                      </label>
+                    )}
+                    {onScrubSpeedFastChange && (
+                      <label className="flex items-center gap-1 text-sm">
+                        <span className="text-zinc-600 dark:text-zinc-400">Fast scrub speed:</span>
                         <input
                           type="number"
                           min={SCRUB_SPEED.min}
@@ -300,7 +320,7 @@ export function ControlBar({
                           value={scrubSpeedFast}
                           onChange={(e) => onScrubSpeedFastChange(Number(e.target.value))}
                           className="w-14 rounded border border-zinc-300 bg-white px-1 py-0.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-                          aria-label="Scrub speed multiplier"
+                          aria-label="Fast scrub speed multiplier"
                         />
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">×</span>
                       </label>

@@ -17,6 +17,7 @@ const PREBUFFER_SECONDS = 5;
 
 export function useScrubberControls(
   controller: YouTubePlayerController | null,
+  scrubSpeedSlow: number,
   scrubSpeedFast: number
 ) {
   const rafIdRef = useRef<number | null>(null);
@@ -99,8 +100,8 @@ export function useScrubberControls(
     [controller, clearHold]
   );
 
-  const startHoldRewind = useCallback(() => startHold("rewind", 1), [startHold]);
-  const startHoldForward = useCallback(() => startHold("forward", 1), [startHold]);
+  const startHoldRewind = useCallback(() => startHold("rewind", scrubSpeedSlow), [startHold, scrubSpeedSlow]);
+  const startHoldForward = useCallback(() => startHold("forward", scrubSpeedSlow), [startHold, scrubSpeedSlow]);
   const startHoldRewindFast = useCallback(() => startHold("rewind-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
   const startHoldForwardFast = useCallback(() => startHold("forward-fast", scrubSpeedFast), [startHold, scrubSpeedFast]);
 

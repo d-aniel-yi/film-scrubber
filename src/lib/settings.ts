@@ -10,6 +10,7 @@ const STORAGE_KEY = "film-scrubber-settings";
 const DEFAULT_SETTINGS: ScrubberSettings = {
   speed: 1,
   slowMoSpeed: SLOW_MO_SPEED.default,
+  scrubSpeedSlow: SCRUB_SPEED.slow,
   scrubSpeedFast: SCRUB_SPEED.fast,
 };
 
@@ -23,10 +24,13 @@ export function loadSettings(): ScrubberSettings {
     const slowMoSpeed = typeof parsed.slowMoSpeed === "number"
       ? Math.max(SLOW_MO_SPEED.min, Math.min(SLOW_MO_SPEED.max, parsed.slowMoSpeed))
       : DEFAULT_SETTINGS.slowMoSpeed;
+    const scrubSpeedSlow = typeof parsed.scrubSpeedSlow === "number"
+      ? Math.max(SCRUB_SPEED.min, Math.min(SCRUB_SPEED.max, parsed.scrubSpeedSlow))
+      : DEFAULT_SETTINGS.scrubSpeedSlow;
     const scrubSpeedFast = typeof parsed.scrubSpeedFast === "number"
       ? Math.max(SCRUB_SPEED.min, Math.min(SCRUB_SPEED.max, parsed.scrubSpeedFast))
       : DEFAULT_SETTINGS.scrubSpeedFast;
-    return { speed, slowMoSpeed, scrubSpeedFast };
+    return { speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast };
   } catch {
     return DEFAULT_SETTINGS;
   }

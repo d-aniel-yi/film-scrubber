@@ -30,6 +30,7 @@ export interface YouTubePlayerController {
 export interface ScrubberSettings {
   speed: number;
   slowMoSpeed: number;
+  scrubSpeedSlow: number;
   scrubSpeedFast: number;
 }
 
@@ -39,5 +40,6 @@ export interface ScrubberUrlState {
   t?: number; // current time (seconds)
   speed?: number;
   slowMo?: number; // slow-mo speed
-  scrubSpeed?: number; // scrub speed multiplier
+  scrubSpeedSlow?: number; // regular scrub speed multiplier
+  scrubSpeed?: number; // fast scrub speed multiplier
 }
