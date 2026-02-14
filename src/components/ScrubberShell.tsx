@@ -31,10 +31,15 @@ export function ScrubberShell() {
     const s = loadSettings();
     const urlState = parseUrlState();
     const applied = applyUrlStateToSettings(urlState);
-    setSlowMoSpeed(applied.slowMoSpeed ?? s.slowMoSpeed);
+    const loadedSlowMo = applied.slowMoSpeed ?? s.slowMoSpeed;
+    const loadedSpeed = applied.speed ?? s.speed;
+    setSlowMoSpeed(loadedSlowMo);
     setScrubSpeedSlow(applied.scrubSpeedSlow ?? s.scrubSpeedSlow);
     setScrubSpeedFast(applied.scrubSpeedFast ?? s.scrubSpeedFast);
-    setSpeed(applied.speed ?? s.speed);
+    setSpeed(loadedSpeed);
+    if (loadedSpeed !== 1 && loadedSpeed === loadedSlowMo) {
+      setIsSlowMo(true);
+    }
     if (applied.videoId) {
       setVideoId(applied.videoId);
       setUrlInput(`https://www.youtube.com/watch?v=${applied.videoId}`);
