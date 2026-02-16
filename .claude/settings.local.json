@@ -17,7 +17,8 @@
       "Skill(gsd:plan-phase)",
       "Skill(gsd:plan-phase:*)",
       "Bash(del \"\\\\?\\\\h:\\\\film\\\\nul\")",
-      "Bash(powershell -Command \"Remove-Item -Path ''\\\\?\\\\h:\\\\film\\\\nul'' -Force\")"
+      "Bash(powershell -Command \"Remove-Item -Path ''\\\\?\\\\h:\\\\film\\\\nul'' -Force\")",
+      "Bash(git -C h:film status --porcelain)"
     ]
   }
 }
