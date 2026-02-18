@@ -52,6 +52,11 @@ export function useLocalPlayer(src: string | null) {
         const handleTimeUpdate = () => setCurrentTime(video.currentTime);
         const handleVolumeChange = () => setVolume(video.volume * 100);
 
+        // Check if metadata is already loaded
+        if (video.readyState >= 1) {
+            handleLoadedMetadata();
+        }
+
         video.addEventListener("loadedmetadata", handleLoadedMetadata);
         video.addEventListener("play", handlePlay);
         video.addEventListener("pause", handlePause);
@@ -94,11 +99,8 @@ export function useLocalPlayer(src: string | null) {
             const video = videoRef.current;
             if (!video) return -1;
             if (video.ended) return -1;
-            if (video.paused) return 2;
-            // HTML5 doesn't have a distinct "cued" state, usually.
-            // We can assume if ready but paused and at 0, maybe cued?
-            // For now, simple paused/playing map.
-            return !video.paused ? 1 : 2;
+            // More robust check:
+            return !video.paused && video.readyState > 2 ? 1 : 2;
         }, []),
         setVolume: useCallback((vol: number) => {
             if (videoRef.current) {

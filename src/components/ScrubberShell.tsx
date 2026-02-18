@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { extractVideoId } from "@/lib/youtube";
 import { loadSettings, saveSettings } from "@/lib/settings";
@@ -143,7 +145,16 @@ export function ScrubberShell() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-4">
+        {mode === "local" && localVideoSrc && (
+          <button
+            type="button"
+            onClick={() => setLocalVideoSrc(null)}
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 underline decoration-dotted underline-offset-4"
+          >
+            Load new video
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setMode(mode === "youtube" ? "local" : "youtube")}
@@ -182,6 +193,7 @@ export function ScrubberShell() {
       )}
 
       <ControlBar
+        key={`${mode}-${videoId || "no-vid"}-${localVideoSrc || "no-src"}`}
         disabled={!activeController}
         controller={activeController}
         speed={speed}

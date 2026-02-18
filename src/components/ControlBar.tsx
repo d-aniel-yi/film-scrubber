@@ -80,23 +80,25 @@ export function ControlBar({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {canControl && (
-        <div className="flex w-full items-center gap-2 px-1">
-          <input
-            type="range"
-            min={0}
-            max={controller.duration || 100}
-            step="any"
-            value={controller.currentTime}
-            onChange={(e) => {
+      <div className="flex w-full items-center gap-2 px-1">
+        <input
+          type="range"
+          min={0}
+          max={controller?.duration || 100}
+          step="any"
+          value={controller?.currentTime || 0}
+          disabled={!canControl}
+          onChange={(e) => {
+            if (controller) {
               const newTime = parseFloat(e.target.value);
               controller.seekTo(newTime);
-            }}
-            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-zinc-200 dark:bg-zinc-700 accent-zinc-800 dark:accent-zinc-200"
-            aria-label="Seek video"
-          />
-        </div>
-      )}
+            }
+          }}
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-zinc-200 dark:bg-zinc-700 accent-zinc-800 dark:accent-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Seek video"
+        />
+      </div>
+
       <div
         className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50 [&_button]:min-h-10 [&_select]:min-h-10"
         role="group"
@@ -115,42 +117,41 @@ export function ControlBar({
               >
                 {controller?.isPlaying ? "Pause" : "Play"}
               </button>
-              {canControl && (
-                <button
-                  type="button"
-                  onClick={onToggleSlowMo}
-                  className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${isSlowMo
-                      ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
-                      : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
-                    } disabled:opacity-50`}
+
+              <button
+                type="button"
+                onClick={onToggleSlowMo}
+                className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${isSlowMo
+                  ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
+                  : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
+                  } disabled:opacity-50`}
+                disabled={!canControl}
+                aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
+              >
+                {isSlowMo ? `${slowMoSpeed}× Slow` : "1× Normal"}
+              </button>
+
+              <span
+                className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-300"
+                aria-label="Current time"
+              >
+                {formatTime(controller?.currentTime ?? 0)}
+              </span>
+
+              <label className="flex items-center gap-1.5 opacity-100 disabled:opacity-50">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Vol</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
                   disabled={!canControl}
-                  aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
-                >
-                  {isSlowMo ? `${slowMoSpeed}× Slow` : "1× Normal"}
-                </button>
-              )}
-              {canControl && (
-                <span
-                  className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-300"
-                  aria-label="Current time"
-                >
-                  {formatTime(controller?.currentTime ?? 0)}
-                </span>
-              )}
-              {canControl && (
-                <label className="flex items-center gap-1.5">
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">Vol</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={controller?.volume ?? 100}
-                    onChange={(e) => controller?.setVolume(Number(e.target.value))}
-                    className="h-1.5 w-20 cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-zinc-800 dark:bg-zinc-700 dark:accent-zinc-200"
-                    aria-label="Volume"
-                  />
-                </label>
-              )}
+                  value={controller?.volume ?? 100}
+                  onChange={(e) => controller?.setVolume(Number(e.target.value))}
+                  className="h-1.5 w-20 cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-zinc-800 dark:bg-zinc-700 dark:accent-zinc-200 disabled:cursor-not-allowed"
+                  aria-label="Volume"
+                />
+              </label>
+
               {!controller?.ready && !disabled && (
                 <span className="text-sm text-zinc-500 dark:text-zinc-400">
                   Loading player…
@@ -163,36 +164,38 @@ export function ControlBar({
               )}
             </div>
 
-            {canControl && scrubber && (
+            {scrubber && (
               <>
                 {/* Hold Buttons Row (Slow) */}
                 <div className="flex w-full gap-2">
                   <button
                     type="button"
+                    disabled={!canControl}
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewind(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
                     className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "rewind"
-                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
-                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                      : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed`}
                     aria-label={`Hold to rewind (${scrubSpeedSlow}×)`}
                   >
                     Rewind
                   </button>
                   <button
                     type="button"
+                    disabled={!canControl}
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldForward(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
                     className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "forward"
-                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
-                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                      : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed`}
                     aria-label={`Hold to forward (${scrubSpeedSlow}×)`}
                   >
                     Forward
@@ -203,30 +206,32 @@ export function ControlBar({
                 <div className="flex w-full gap-2">
                   <button
                     type="button"
+                    disabled={!canControl}
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldRewindFast(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
                     className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "rewind-fast"
-                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
-                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                      : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed`}
                     aria-label={`Hold to fast rewind (${scrubSpeedFast}×)`}
                   >
                     Fast Rewind
                   </button>
                   <button
                     type="button"
+                    disabled={!canControl}
                     onPointerDown={(e) => { e.preventDefault(); scrubber.startHoldForwardFast(); }}
                     onPointerUp={scrubber.stopHold}
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
                     className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "forward-fast"
-                        ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
-                        : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
+                      : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed`}
                     aria-label={`Hold to fast forward (${scrubSpeedFast}×)`}
                   >
                     Fast Forward
@@ -239,16 +244,18 @@ export function ControlBar({
                     <div key={sec} className="flex items-center gap-0.5">
                       <button
                         type="button"
+                        disabled={!canControl}
                         onClick={() => scrubber.jumpBack(sec)}
-                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label={`Jump back ${sec}s`}
                       >
                         −{sec}s
                       </button>
                       <button
                         type="button"
+                        disabled={!canControl}
                         onClick={() => scrubber.jumpForward(sec)}
-                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label={`Jump forward ${sec}s`}
                       >
                         +{sec}s
