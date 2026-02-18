@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import type { YouTubePlayerController } from "@/types/player";
+import type { PlayerController } from "@/types/player";
 import { SLOW_MO_SPEED, SCRUB_SPEED } from "@/lib/constants";
 import { formatTime } from "@/lib/time";
 
@@ -19,7 +19,7 @@ type ScrubberControls = {
 
 type ControlBarProps = {
   disabled?: boolean;
-  controller?: YouTubePlayerController | null;
+  controller?: PlayerController | null;
   speed?: number;
   onSpeedChange?: (rate: number) => void;
   slowMoSpeed?: number;
@@ -119,11 +119,10 @@ export function ControlBar({
                 <button
                   type="button"
                   onClick={onToggleSlowMo}
-                  className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                    isSlowMo
+                  className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${isSlowMo
                       ? "bg-amber-600 text-white active:bg-amber-700 dark:bg-amber-500 dark:active:bg-amber-600"
                       : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
-                  } disabled:opacity-50`}
+                    } disabled:opacity-50`}
                   disabled={!canControl}
                   aria-label={isSlowMo ? "Switch to normal speed" : "Switch to slow motion"}
                 >
@@ -175,11 +174,10 @@ export function ControlBar({
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
-                      scrubber.holdDirection === "rewind"
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "rewind"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
                     aria-label={`Hold to rewind (${scrubSpeedSlow}×)`}
                   >
                     Rewind
@@ -191,11 +189,10 @@ export function ControlBar({
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
-                      scrubber.holdDirection === "forward"
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "forward"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
                     aria-label={`Hold to forward (${scrubSpeedSlow}×)`}
                   >
                     Forward
@@ -211,11 +208,10 @@ export function ControlBar({
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
-                      scrubber.holdDirection === "rewind-fast"
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "rewind-fast"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
                     aria-label={`Hold to fast rewind (${scrubSpeedFast}×)`}
                   >
                     Fast Rewind
@@ -227,11 +223,10 @@ export function ControlBar({
                     onPointerLeave={scrubber.stopHold}
                     onPointerCancel={scrubber.stopHold}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${
-                      scrubber.holdDirection === "forward-fast"
+                    className={`flex-1 select-none touch-none rounded border py-3 text-center text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 sm:flex-none sm:px-3 sm:py-2.5 ${scrubber.holdDirection === "forward-fast"
                         ? "border-zinc-500 bg-zinc-200 dark:border-zinc-400 dark:bg-zinc-600"
                         : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-800"
-                    } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
+                      } dark:hover:bg-zinc-700 dark:active:bg-zinc-600`}
                     aria-label={`Hold to fast forward (${scrubSpeedFast}×)`}
                   >
                     Fast Forward

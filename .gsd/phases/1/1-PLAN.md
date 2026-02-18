@@ -4,10 +4,10 @@ plan: 1
 wave: 1
 ---
 
-# Plan 1.1: Player Abstraction
+# Plan 1.1: Player Abstraction & Experimental Toggle
 
 ## Objective
-Refactor the codebase to use a generic `PlayerController` interface instead of the YouTube-specific one. This checks the box for "Core Abstraction" in the roadmap and prepares the ground for the Local Player.
+Establish a multi-player architecture with a `PlayerController` interface and add an experimental UI toggle. This allows users to switch between the stable YouTube player and a placeholder for the upcoming Local Player, ensuring the current experience remains untouched by default.
 
 ## Context
 - .gsd/SPEC.md
@@ -19,23 +19,23 @@ Refactor the codebase to use a generic `PlayerController` interface instead of t
 ## Tasks
 
 <task type="auto">
-  <name>Generalize Player Interface</name>
+  <name>Extract Core Interface</name>
   <files>src/types/player.ts</files>
   <action>
-    - Rename `YouTubePlayerController` to `PlayerController`.
-    - Review methods for universality. `getAvailablePlaybackRates` and `getPlayerState` (fetching raw YT constants) might need adaptation, but for now, we can keep the interface broad and expect the Local Player to provide shims (e.g., returning standard states or a fixed list of rates).
-    - Ensure comments reflect the generic nature.
+    - Define `PlayerController` interface (play, pause, seek, etc.).
+    - Refactor `YouTubePlayerController` to implement it.
+    - Add `PlayerMode` type ('youtube' | 'local').
   </action>
   <verify>
     grep "interface PlayerController" src/types/player.ts
   </verify>
   <done>
-    Interface is named `PlayerController` and exported.
+    Interface defined and implemented by YouTube controller.
   </done>
 </task>
 
 <task type="auto">
-  <name>Update Hooks to use PlayerController</name>
+  <name>Refactor Hooks for Polymorphism</name>
   <files>
     src/hooks/useYouTubePlayer.ts
     src/hooks/useScrubberControls.ts
@@ -44,19 +44,41 @@ Refactor the codebase to use a generic `PlayerController` interface instead of t
   </files>
   <action>
     - Update `useYouTubePlayer` to return `PlayerController`.
-    - Update `useScrubberControls` to accept `PlayerController`.
-    - Update `ScrubberShell` and `ControlBar` to use `PlayerController` type.
-    - Fix any type errors resulting from the rename.
+    - Update `useScrubberControls` to accept generic `PlayerController`.
+    - Update components to use the generic type.
   </action>
   <verify>
     npm run type-check
   </verify>
   <done>
-    Project compiles without type errors.
+    Project compiles. Generic logic in place.
+  </done>
+</task>
+
+<task type="auto">
+  <name>Add Experimental UI Toggle</name>
+  <files>
+    src/components/ScrubberShell.tsx
+    src/components/LocalPlayerPlaceholder.tsx
+  </files>
+  <action>
+    - Create `src/components/LocalPlayerPlaceholder.tsx` (simple "Coming Soon" div).
+    - In `ScrubberShell`, add state `mode: PlayerMode` (default 'youtube').
+    - Add a button "Switch to local player - EXPERIMENTAL" (e.g., in header or settings).
+    - When clicked, toggle `mode`.
+    - Conditionally render `PlayerArea` (if youtube) or `LocalPlayerPlaceholder` (if local).
+    - Ensure `useScrubberControls` receives `null` or a dummy controller when in local mode (until Phase 2).
+  </action>
+  <verify>
+    npm run build
+  </verify>
+  <done>
+    Button exists. Clicking it toggles between YouTube player and placeholder.
   </done>
 </task>
 
 ## Success Criteria
-- [ ] `YouTubePlayerController` is renamed to `PlayerController`.
-- [ ] `npm run build` passes.
-- [ ] Application still works with YouTube video (regression testing).
+- [ ] `PlayerController` interface defined.
+- [ ] Hooks refactored to use interface.
+- [ ] "Switch to local player - EXPERIMENTAL" button acts as a toggle.
+- [ ] YouTube player works exactly as before in default mode.

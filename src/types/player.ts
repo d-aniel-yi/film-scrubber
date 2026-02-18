@@ -2,8 +2,10 @@
  * Player and app state types. No raw YouTube types leak out.
  */
 
+export type PlayerMode = "youtube" | "local";
+
 /** Controller returned by useYouTubePlayer; only interface the app uses. */
-export interface YouTubePlayerController {
+export interface PlayerController {
   play: () => void;
   pause: () => void;
   seekTo: (seconds: number) => void;
@@ -25,6 +27,9 @@ export interface YouTubePlayerController {
   /** Volume 0–100 (updated by polling). */
   volume: number;
 }
+
+// Deprecated alias to ease refactoring if needed, but we're updating all usages.
+export type YouTubePlayerController = PlayerController;
 
 /** Shape of settings persisted in localStorage. */
 export interface ScrubberSettings {

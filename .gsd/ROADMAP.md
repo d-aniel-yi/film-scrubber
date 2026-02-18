@@ -12,15 +12,16 @@
 ## Phases
 
 ### Phase 1: Core Abstraction
-**Status**: ⬜ Not Started
-**Objective**: Refactor the codebase to support multiple player backends by abstracting the player control logic.
+**Status**: ✅ Complete
+**Objective**: Abstract player logic into generic interface + Experimental UI Toggle
+**Requirements**: REQ-01, REQ-04
 **Key Deliverables**:
 -   `PlayerController` interface definition.
 -   Updated `useYouTubePlayer` implementing the interface.
 -   Refactored `useScrubberControls` to accept the generic interface.
 
 ### Phase 2: Local Player Implementation
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Implement the HTML5 video player and integrate it into the main UI.
 **Key Deliverables**:
 -   `LocalPlayer` component with file input.
