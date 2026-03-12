@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 5 of 5 (Drawing Overlay) — Not started
-Plan: 0/2
-Status: Ready to plan
-Last activity: 2026-03-12 — Milestone v1.1 initialized
+Phase: 5 of 5 (Drawing Overlay) — In progress
+Plan: 1/2
+Status: In progress
+Last activity: 2026-03-12 — Completed 05-01-PLAN.md (drawing overlay foundation)
 
-Progress: [░░░░░░░░░░] 0% (v1.1)
+Progress: [█████░░░░░] 50% (v1.1)
 
 ## Performance Metrics
 
@@ -29,12 +29,21 @@ Progress: [░░░░░░░░░░] 0% (v1.1)
 | 01-touch-native-foundation | 2/2 | 60 min | 30 min |
 | 02-core-playback-scrubbing | 3/3 | 6 min | 2 min |
 | 03-film-clicker-layout | 4/4 | 33 min | 8 min |
+| 05-drawing-overlay | 1/2 | 3 min | 3 min |
 
 ## Accumulated Context
 
 ### Decisions
 
 All v1.0 decisions logged in PROJECT.md Key Decisions table.
+
+**v1.1 Decisions:**
+
+| Plan | Decision | Rationale |
+|------|----------|-----------|
+| 05-01 | `pointer-events-none` on canvas when not drawing | Preserves native video click-to-play without special handling |
+| 05-01 | Single canvasRef for both player modes | Only one player mode renders at a time |
+| 05-01 | Local variable pattern in onPointerUp for committed strokes | Avoids stale-closure redraw with stale strokes state |
 
 ### Patterns Established
 
@@ -47,6 +56,9 @@ All v1.0 decisions logged in PROJECT.md Key Decisions table.
 - Film clicker hierarchy: seek bar → play/toggle → hold (slow) → hold (fast) → jumps → settings
 - `isSlowMo` derived from loaded settings: `speed !== 1 && speed === slowMoSpeed`
 - Progressive keyboard shortcuts: base key = common, Shift = medium, Cmd/Ctrl = large
+- DrawingOverlay: `absolute inset-0 h-full w-full` inside relative player container
+- Canvas drawing: `pointer-events-none` when inactive, `touch-none` when active
+- Drawing state flows: `useDrawing` -> `ScrubberShell` -> `ControlBar` + `DrawingOverlay`
 
 ### Pending Todos
 
@@ -59,5 +71,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: v1.1 initialized, Phase 5 ready to plan
+Stopped at: Completed 05-01-PLAN.md — drawing overlay foundation (useDrawing, DrawingOverlay, PlayerArea children, ScrubberShell wiring, ControlBar Draw button)
 Resume file: None
