@@ -72,7 +72,7 @@ export function useLocalPlayer(src: string | null) {
             video.removeEventListener("timeupdate", handleTimeUpdate);
             video.removeEventListener("volumechange", handleVolumeChange);
         };
-    }, [updateState]);
+    }, [updateState, src]);
 
     // Polling for smoother time updates if needed, though timeupdate fires reasonably often.
     // We'll rely on timeupdate for now as it's standard for HTML5 video.
@@ -115,6 +115,7 @@ export function useLocalPlayer(src: string | null) {
         duration,
         isPlaying,
         volume,
+        frameRate: 30,
     };
 
     return { controller, videoRef };

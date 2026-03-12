@@ -26,6 +26,8 @@ export interface PlayerController {
   isPlaying: boolean;
   /** Volume 0–100 (updated by polling). */
   volume: number;
+  /** Optional frame rate for frame-based scrubbing. */
+  frameRate?: number;
 }
 
 // Deprecated alias to ease refactoring if needed, but we're updating all usages.

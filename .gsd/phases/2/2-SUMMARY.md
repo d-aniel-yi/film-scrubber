@@ -13,6 +13,7 @@
     -   Added `key` to `ControlBar` to ensure proper re-initialization.
     -   **Update:** Made player controls visible by default (disabled state) for better UX.
     -   **Update:** Added disabled styling to Jump buttons.
+    -   **Update:** Implemented Frame-Based Scrubbing (+1f/-1f) for local player.
 
 ## Verification
 - `npx tsc --noEmit` passed successfully.

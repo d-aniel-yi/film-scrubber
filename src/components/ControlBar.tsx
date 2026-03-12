@@ -240,28 +240,60 @@ export function ControlBar({
 
                 {/* Jump Buttons Row */}
                 <div className="flex w-full flex-wrap items-center gap-2">
-                  {scrubber.jumpAmounts.map((sec) => (
-                    <div key={sec} className="flex items-center gap-0.5">
-                      <button
-                        type="button"
-                        disabled={!canControl}
-                        onClick={() => scrubber.jumpBack(sec)}
-                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label={`Jump back ${sec}s`}
-                      >
-                        −{sec}s
-                      </button>
-                      <button
-                        type="button"
-                        disabled={!canControl}
-                        onClick={() => scrubber.jumpForward(sec)}
-                        className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label={`Jump forward ${sec}s`}
-                      >
-                        +{sec}s
-                      </button>
-                    </div>
-                  ))}
+                  {controller?.frameRate ? (
+                    // Frame-based jumps (1 frame, 5 frames)
+                    [1, 5].map((frames) => {
+                      const frameDuration = 1 / (controller.frameRate || 30);
+                      const jumpAmt = frames * frameDuration;
+                      const label = frames === 1 ? "1f" : `${frames}f`;
+                      return (
+                        <div key={frames} className="flex items-center gap-0.5">
+                          <button
+                            type="button"
+                            disabled={!canControl}
+                            onClick={() => scrubber.jumpBack(jumpAmt)}
+                            className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label={`Jump back ${frames} frame${frames > 1 ? "s" : ""}`}
+                          >
+                            −{label}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!canControl}
+                            onClick={() => scrubber.jumpForward(jumpAmt)}
+                            className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label={`Jump forward ${frames} frame${frames > 1 ? "s" : ""}`}
+                          >
+                            +{label}
+                          </button>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    // Time-based jumps
+                    scrubber.jumpAmounts.map((sec) => (
+                      <div key={sec} className="flex items-center gap-0.5">
+                        <button
+                          type="button"
+                          disabled={!canControl}
+                          onClick={() => scrubber.jumpBack(sec)}
+                          className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          aria-label={`Jump back ${sec}s`}
+                        >
+                          −{sec}s
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!canControl}
+                          onClick={() => scrubber.jumpForward(sec)}
+                          className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-2.5 py-2.5 text-sm hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          aria-label={`Jump forward ${sec}s`}
+                        >
+                          +{sec}s
+                        </button>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 {/* Settings Toggle Button Row */}
