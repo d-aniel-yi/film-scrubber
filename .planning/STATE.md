@@ -5,23 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Controls must feel like a dedicated film room clicker — native-feeling buttons with instant response
-**Current focus:** Planning next milestone (new feature)
+**Current focus:** Phase 5 (Drawing Overlay)
 
 ## Current Position
 
-Phase: v1.0 complete
-Plan: —
-Status: Between milestones
-Last activity: 2026-03-12 — v1.0 milestone archived
+Phase: 5 of 5 (Drawing Overlay) — Not started
+Plan: 0/2
+Status: Ready to plan
+Last activity: 2026-03-12 — Milestone v1.1 initialized
 
-Progress: [██████████] 100% (v1.0)
+Progress: [░░░░░░░░░░] 0% (v1.1)
 
 ## Performance Metrics
 
-**Velocity:**
+**Velocity (v1.0):**
 - Total plans completed: 9
 - Average duration: ~10 min
-- Total execution time: ~2.5 hours
 
 **By Phase:**
 
@@ -60,7 +59,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: v1.0 milestone complete
+Stopped at: v1.1 initialized, Phase 5 ready to plan
 Resume file: None
-
-Next step: `/gsd:new-milestone` to plan new feature

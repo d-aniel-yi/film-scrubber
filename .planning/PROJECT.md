@@ -27,9 +27,12 @@ The controls must feel like a dedicated film room clicker — native-feeling but
 - ✓ Film clicker stacked row layout with collapsible settings — v1.0
 - ✓ Keyboard shortcuts: Space, JKL, S, Arrow+modifiers — v1.0
 
-### Active
+### Active (v1.1 Drawing Overlay)
 
-(None — v1.0 shipped. See `/gsd:new-milestone` for next milestone.)
+- [ ] Drawing canvas overlay on video (transparent, toggleable, session-only)
+- [ ] Freehand and line drawing tools with color picker and stroke width
+- [ ] Undo, redo, and clear operations
+- [ ] Drawing works on both mouse and touch
 
 ### Out of Scope
 
