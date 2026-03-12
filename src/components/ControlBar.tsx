@@ -125,8 +125,9 @@ export function ControlBar({
         />
       </div>
 
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-start">
       <div
-        className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50 [&_button]:min-h-10 [&_select]:min-h-10"
+        className="flex flex-1 flex-col gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50 [&_button]:min-h-10 [&_select]:min-h-10"
         role="group"
         aria-label="Playback controls"
       >
@@ -332,121 +333,7 @@ export function ControlBar({
                   >
                     Settings {settingsExpanded ? "▲" : "▼"}
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={onToggleDrawing}
-                    className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                      isDrawingMode
-                        ? "bg-red-600 text-white active:bg-red-700 dark:bg-red-500 dark:active:bg-red-600"
-                        : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
-                    }`}
-                    aria-label={isDrawingMode ? "Exit drawing mode" : "Enter drawing mode"}
-                    aria-pressed={isDrawingMode}
-                  >
-                    {isDrawingMode ? "Drawing" : "Draw"}
-                  </button>
                 </div>
-
-                {/* Drawing Tools Row */}
-                {isDrawingMode && (
-                  <div className="flex w-full flex-wrap items-center gap-2" role="group" aria-label="Drawing tools">
-                    {/* Tool: Freehand */}
-                    <button
-                      type="button"
-                      onClick={() => onDrawingToolChange?.("freehand")}
-                      className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                        drawingActiveTool === "freehand"
-                          ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100 dark:active:bg-zinc-500"
-                          : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                      }`}
-                      aria-label="Freehand drawing tool"
-                      aria-pressed={drawingActiveTool === "freehand"}
-                    >
-                      Freehand
-                    </button>
-
-                    {/* Tool: Line */}
-                    <button
-                      type="button"
-                      onClick={() => onDrawingToolChange?.("line")}
-                      className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                        drawingActiveTool === "line"
-                          ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100 dark:active:bg-zinc-500"
-                          : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
-                      }`}
-                      aria-label="Line drawing tool"
-                      aria-pressed={drawingActiveTool === "line"}
-                    >
-                      Line
-                    </button>
-
-                    {/* Color picker */}
-                    <label className="flex items-center gap-1.5">
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400">Color</span>
-                      <input
-                        type="color"
-                        value={drawingColor}
-                        onChange={(e) => onDrawingColorChange?.(e.target.value)}
-                        className="h-8 w-8 cursor-pointer rounded border border-zinc-300 bg-white p-0.5 dark:border-zinc-600 dark:bg-zinc-800"
-                        aria-label="Pen color"
-                      />
-                    </label>
-
-                    {/* Stroke width: 3 preset buttons */}
-                    <div className="flex items-center gap-1" role="group" aria-label="Stroke width">
-                      {([2, 4, 8] as const).map((w) => (
-                        <button
-                          key={w}
-                          type="button"
-                          onClick={() => onDrawingStrokeWidthChange?.(w)}
-                          className={`select-none touch-manipulation rounded border px-2.5 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
-                            drawingStrokeWidth === w
-                              ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100"
-                              : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                          }`}
-                          aria-label={`Stroke width ${w}px`}
-                          aria-pressed={drawingStrokeWidth === w}
-                        >
-                          {w}px
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Undo */}
-                    <button
-                      type="button"
-                      onClick={onUndo}
-                      disabled={!canUndo}
-                      className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      aria-label="Undo last stroke"
-                    >
-                      Undo
-                    </button>
-
-                    {/* Redo */}
-                    <button
-                      type="button"
-                      onClick={onRedo}
-                      disabled={!canRedo}
-                      className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      aria-label="Redo last undone stroke"
-                    >
-                      Redo
-                    </button>
-
-                    {/* Clear */}
-                    <button
-                      type="button"
-                      onClick={onClear}
-                      disabled={!canUndo}
-                      className="select-none touch-manipulation rounded border border-red-300 bg-white px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 active:scale-95 active:bg-red-100 dark:border-red-700 dark:bg-zinc-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:active:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-50"
-                      aria-label="Clear all drawings"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                )}
 
                 {/* Settings Panel */}
                 {settingsExpanded && (
@@ -522,6 +409,119 @@ export function ControlBar({
             )}
           </>
         )}
+      </div>
+
+      {/* Drawing toolbox — separate panel, right of player controls on large screens */}
+      <div
+        className="flex flex-wrap items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-950/20 [&_button]:min-h-10 lg:w-72 lg:flex-col lg:items-start lg:self-stretch"
+        role="group"
+        aria-label="Drawing tools"
+      >
+        <button
+          type="button"
+          onClick={onToggleDrawing}
+          className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+            isDrawingMode
+              ? "bg-red-600 text-white active:bg-red-700 dark:bg-red-500 dark:active:bg-red-600"
+              : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
+          }`}
+          aria-label={isDrawingMode ? "Exit drawing mode" : "Enter drawing mode"}
+          aria-pressed={isDrawingMode}
+        >
+          {isDrawingMode ? "Drawing ▲" : "Draw ▼"}
+        </button>
+
+        {isDrawingMode && (
+          <><button
+            type="button"
+            onClick={() => onDrawingToolChange?.("freehand")}
+            className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+              drawingActiveTool === "freehand"
+                ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100 dark:active:bg-zinc-500"
+                : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+            }`}
+            aria-label="Freehand drawing tool"
+            aria-pressed={drawingActiveTool === "freehand"}
+          >
+            Freehand
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onDrawingToolChange?.("line")}
+            className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+              drawingActiveTool === "line"
+                ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100 dark:active:bg-zinc-500"
+                : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600"
+            }`}
+            aria-label="Line drawing tool"
+            aria-pressed={drawingActiveTool === "line"}
+          >
+            Line
+          </button>
+
+          <label className="flex items-center gap-1.5">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">Color</span>
+            <input
+              type="color"
+              value={drawingColor}
+              onChange={(e) => onDrawingColorChange?.(e.target.value)}
+              className="h-8 w-8 cursor-pointer rounded border border-zinc-300 bg-white p-0.5 dark:border-zinc-600 dark:bg-zinc-800"
+              aria-label="Pen color"
+            />
+          </label>
+
+          <div className="flex items-center gap-1" role="group" aria-label="Stroke width">
+            {([2, 4, 8] as const).map((w) => (
+              <button
+                key={w}
+                type="button"
+                onClick={() => onDrawingStrokeWidthChange?.(w)}
+                className={`select-none touch-manipulation rounded border px-2.5 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                  drawingStrokeWidth === w
+                    ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100"
+                    : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                }`}
+                aria-label={`Stroke width ${w}px`}
+                aria-pressed={drawingStrokeWidth === w}
+              >
+                {w}px
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={onUndo}
+            disabled={!canUndo}
+            className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Undo last stroke"
+          >
+            Undo
+          </button>
+
+          <button
+            type="button"
+            onClick={onRedo}
+            disabled={!canRedo}
+            className="select-none touch-manipulation rounded border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium hover:bg-zinc-100 active:scale-95 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:active:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Redo last undone stroke"
+          >
+            Redo
+          </button>
+
+          <button
+            type="button"
+            onClick={onClear}
+            disabled={!canUndo}
+            className="select-none touch-manipulation rounded border border-red-300 bg-white px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 active:scale-95 active:bg-red-100 dark:border-red-700 dark:bg-zinc-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:active:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Clear all drawings"
+          >
+            Clear
+          </button>
+          </>
+        )}
+      </div>
       </div>
     </div>
   );
