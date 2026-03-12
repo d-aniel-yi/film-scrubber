@@ -236,6 +236,15 @@ export function ScrubberShell() {
         onToggleDrawing={drawing.onToggleDrawing}
         drawingActiveTool={drawing.activeTool}
         onDrawingToolChange={drawing.setActiveTool}
+        drawingColor={drawing.color}
+        onDrawingColorChange={drawing.setColor}
+        drawingStrokeWidth={drawing.strokeWidth}
+        onDrawingStrokeWidthChange={drawing.setStrokeWidth}
+        onUndo={drawing.undo}
+        onRedo={drawing.redo}
+        onClear={drawing.clear}
+        canUndo={drawing.strokes.length > 0}
+        canRedo={drawing.undoneStrokes.length > 0}
       />
       <HelpPanel />
     </div>
