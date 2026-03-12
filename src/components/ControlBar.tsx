@@ -33,6 +33,10 @@ type ControlBarProps = {
   scrubber?: ScrubberControls;
   settingsExpanded?: boolean;
   onSettingsExpandedChange?: (expanded: boolean) => void;
+  isDrawingMode?: boolean;
+  onToggleDrawing?: () => void;
+  drawingActiveTool?: "freehand" | "line";
+  onDrawingToolChange?: (tool: "freehand" | "line") => void;
   children?: React.ReactNode;
 };
 
@@ -52,6 +56,10 @@ export function ControlBar({
   scrubber,
   settingsExpanded = false,
   onSettingsExpandedChange,
+  isDrawingMode = false,
+  onToggleDrawing,
+  drawingActiveTool = "freehand",
+  onDrawingToolChange,
   children,
 }: ControlBarProps) {
   const canControl = !disabled && controller?.ready;
@@ -296,17 +304,64 @@ export function ControlBar({
                   )}
                 </div>
 
-                {/* Settings Toggle Button Row */}
-                <div className="flex w-full">
+                {/* Settings and Draw Toggle Row */}
+                <div className="flex w-full flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={() => onSettingsExpandedChange?.(!settingsExpanded)}
-                    className="w-full select-none touch-manipulation rounded bg-zinc-800 px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800 dark:active:bg-zinc-100 sm:w-auto"
+                    className="select-none touch-manipulation rounded bg-zinc-800 px-3 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:focus:ring-offset-zinc-800 dark:active:bg-zinc-100 sm:w-auto w-full"
                     aria-label={settingsExpanded ? "Hide settings" : "Show settings"}
                   >
                     Settings {settingsExpanded ? "▲" : "▼"}
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={onToggleDrawing}
+                    className={`select-none touch-manipulation rounded px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                      isDrawingMode
+                        ? "bg-red-600 text-white active:bg-red-700 dark:bg-red-500 dark:active:bg-red-600"
+                        : "bg-zinc-800 text-white active:bg-zinc-900 dark:bg-zinc-200 dark:text-zinc-900 dark:active:bg-zinc-100"
+                    }`}
+                    aria-label={isDrawingMode ? "Exit drawing mode" : "Enter drawing mode"}
+                    aria-pressed={isDrawingMode}
+                  >
+                    {isDrawingMode ? "Drawing" : "Draw"}
+                  </button>
                 </div>
+
+                {/* Drawing Tools Row */}
+                {isDrawingMode && (
+                  <div className="flex w-full flex-wrap items-center gap-2" role="group" aria-label="Drawing tools">
+                    <button
+                      type="button"
+                      onClick={() => onDrawingToolChange?.("freehand")}
+                      className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                        drawingActiveTool === "freehand"
+                          ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100"
+                          : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                      }`}
+                      aria-label="Freehand drawing tool"
+                      aria-pressed={drawingActiveTool === "freehand"}
+                    >
+                      Freehand
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onDrawingToolChange?.("line")}
+                      className={`select-none touch-manipulation rounded border px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 active:scale-95 ${
+                        drawingActiveTool === "line"
+                          ? "border-zinc-500 bg-zinc-200 text-zinc-900 active:bg-zinc-300 dark:border-zinc-400 dark:bg-zinc-600 dark:text-zinc-100"
+                          : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                      }`}
+                      aria-label="Line drawing tool"
+                      aria-pressed={drawingActiveTool === "line"}
+                    >
+                      Line
+                    </button>
+                  </div>
+                )}
 
                 {/* Settings Panel */}
                 {settingsExpanded && (
