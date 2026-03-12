@@ -8,12 +8,14 @@ import { useYouTubePlayer } from "@/hooks/useYouTubePlayer";
 import { useLocalPlayer } from "@/hooks/useLocalPlayer";
 import { useScrubberControls } from "@/hooks/useScrubberControls";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useDrawing } from "@/hooks/useDrawing";
 import { SCRUB_SPEED, SLOW_MO_SPEED } from "@/lib/constants";
 import { UrlInput } from "./UrlInput";
 import { PlayerArea } from "./PlayerArea";
 import { ControlBar } from "./ControlBar";
 import { HelpPanel } from "./HelpPanel";
 import { LocalPlayer } from "./LocalPlayer";
+import { DrawingOverlay } from "./DrawingOverlay";
 
 const URL_DEBOUNCE_MS = 500;
 
@@ -72,6 +74,8 @@ export function ScrubberShell() {
     scrubSpeedSlow,
     scrubSpeedFast
   );
+
+  const drawing = useDrawing();
 
   const toggleSlowMo = () => {
     if (!activeController?.ready) return;
@@ -180,14 +184,31 @@ export function ScrubberShell() {
             videoId={videoId}
             isEmpty={!videoId}
             containerId={videoId ? youtubePlayer.containerId : undefined}
-          />
+          >
+            <DrawingOverlay
+              isDrawingMode={drawing.isDrawingMode}
+              canvasRef={drawing.canvasRef}
+              onPointerDown={drawing.onPointerDown}
+              onPointerMove={drawing.onPointerMove}
+              onPointerUp={drawing.onPointerUp}
+              onPointerLeave={drawing.onPointerLeave}
+            />
+          </PlayerArea>
         </>
       ) : (
-        <div className="aspect-video w-full overflow-hidden rounded-lg bg-zinc-900 border border-zinc-800">
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-900 border border-zinc-800">
           <LocalPlayer
             videoRef={localPlayer.videoRef}
             src={localVideoSrc}
             onFileSelect={handleFileSelect}
+          />
+          <DrawingOverlay
+            isDrawingMode={drawing.isDrawingMode}
+            canvasRef={drawing.canvasRef}
+            onPointerDown={drawing.onPointerDown}
+            onPointerMove={drawing.onPointerMove}
+            onPointerUp={drawing.onPointerUp}
+            onPointerLeave={drawing.onPointerLeave}
           />
         </div>
       )}
@@ -209,6 +230,10 @@ export function ScrubberShell() {
         scrubber={scrubber}
         settingsExpanded={settingsExpanded}
         onSettingsExpandedChange={setSettingsExpanded}
+        isDrawingMode={drawing.isDrawingMode}
+        onToggleDrawing={drawing.onToggleDrawing}
+        drawingActiveTool={drawing.activeTool}
+        onDrawingToolChange={drawing.setActiveTool}
       />
       <HelpPanel />
     </div>

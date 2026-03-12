@@ -5,9 +5,10 @@ type PlayerAreaProps = {
   isEmpty: boolean;
   /** ID of the div where the YouTube IFrame API will mount the player. */
   containerId?: string;
+  children?: React.ReactNode;
 };
 
-export function PlayerArea({ videoId, isEmpty, containerId }: PlayerAreaProps) {
+export function PlayerArea({ videoId, isEmpty, containerId, children }: PlayerAreaProps) {
   return (
     <div className="relative w-full overflow-hidden rounded-lg bg-zinc-900" style={{ aspectRatio: "16/9" }}>
       {isEmpty && (
@@ -22,6 +23,7 @@ export function PlayerArea({ videoId, isEmpty, containerId }: PlayerAreaProps) {
           aria-label="YouTube player"
         />
       )}
+      {children}
     </div>
   );
 }
