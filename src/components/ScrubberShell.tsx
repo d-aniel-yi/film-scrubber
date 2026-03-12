@@ -5,19 +5,26 @@ import { extractVideoId } from "@/lib/youtube";
 import { loadSettings, saveSettings } from "@/lib/settings";
 import { parseUrlState, buildSearchParams, applyUrlStateToSettings } from "@/lib/urlState";
 import { useYouTubePlayer } from "@/hooks/useYouTubePlayer";
+import { useLocalPlayer } from "@/hooks/useLocalPlayer";
 import { useScrubberControls } from "@/hooks/useScrubberControls";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useDrawing } from "@/hooks/useDrawing";
 import { SCRUB_SPEED, SLOW_MO_SPEED } from "@/lib/constants";
 import { UrlInput } from "./UrlInput";
 import { PlayerArea } from "./PlayerArea";
 import { ControlBar } from "./ControlBar";
 import { HelpPanel } from "./HelpPanel";
+import { LocalPlayer } from "./LocalPlayer";
+import { DrawingOverlay } from "./DrawingOverlay";
 
 const URL_DEBOUNCE_MS = 500;
 
 export function ScrubberShell() {
+  const [mode, setMode] = useState<"youtube" | "local">("youtube");
   const [urlInput, setUrlInput] = useState("");
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [localVideoSrc, setLocalVideoSrc] = useState<string | null>(null);
+
   const [slowMoSpeed, setSlowMoSpeed] = useState<number>(SLOW_MO_SPEED.default);
   const [isSlowMo, setIsSlowMo] = useState(false);
   const [scrubSpeedSlow, setScrubSpeedSlow] = useState<number>(SCRUB_SPEED.slow);
@@ -50,48 +57,65 @@ export function ScrubberShell() {
     saveSettings({ speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast });
   }, [speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast]);
 
-  const { controller, containerId } = useYouTubePlayer(videoId);
+  // YouTube Player
+  const activeVideoId = mode === "youtube" ? videoId : null;
+  const youtubePlayer = useYouTubePlayer(activeVideoId);
+
+  // Local Player
+  const localPlayer = useLocalPlayer(localVideoSrc);
+
+  // Active Controller
+  const activeController = mode === "youtube"
+    ? (activeVideoId ? youtubePlayer.controller : null)
+    : (localVideoSrc ? localPlayer.controller : null);
+
   const scrubber = useScrubberControls(
-    videoId ? controller : null,
+    activeController,
     scrubSpeedSlow,
     scrubSpeedFast
   );
 
+  const drawing = useDrawing();
+
   const toggleSlowMo = () => {
+    if (!activeController?.ready) return;
     const newIsSlowMo = !isSlowMo;
     setIsSlowMo(newIsSlowMo);
     const newSpeed = newIsSlowMo ? slowMoSpeed : 1;
     setSpeed(newSpeed);
-    controller.setPlaybackRate(newSpeed);
+    activeController.setPlaybackRate(newSpeed);
   };
 
   useKeyboardShortcuts(
-    Boolean(videoId && controller.ready),
-    videoId ? controller : null,
+    Boolean(activeController?.ready),
+    activeController,
     scrubber,
     toggleSlowMo
   );
 
+  // Initial Seek from URL (YouTube only for now, local files don't support deep links yet)
   useEffect(() => {
-    if (!videoId || !controller.ready || hasSeekedFromUrlRef.current) return;
+    if (mode !== "youtube" || !videoId || !youtubePlayer.controller.ready || hasSeekedFromUrlRef.current) return;
     const urlState = parseUrlState();
     const applied = applyUrlStateToSettings(urlState);
     if (applied.seekTime != null) {
-      controller.seekTo(applied.seekTime);
+      youtubePlayer.controller.seekTo(applied.seekTime);
       hasSeekedFromUrlRef.current = true;
     }
-  }, [videoId, controller.ready, controller]);
+  }, [mode, videoId, youtubePlayer.controller.ready, youtubePlayer.controller]);
+
   useEffect(() => {
     if (!videoId) hasSeekedFromUrlRef.current = false;
   }, [videoId]);
 
+  // URL Updates (YouTube only)
   useEffect(() => {
-    if (!videoId) return;
+    if (mode !== "youtube" || !videoId) return;
     if (urlUpdateTimeoutRef.current) clearTimeout(urlUpdateTimeoutRef.current);
     urlUpdateTimeoutRef.current = setTimeout(() => {
       const qs = buildSearchParams({
         v: videoId,
-        t: controller.currentTime,
+        t: youtubePlayer.controller.currentTime,
         speed,
         slowMoSpeed,
         scrubSpeedSlow,
@@ -103,7 +127,7 @@ export function ScrubberShell() {
     return () => {
       if (urlUpdateTimeoutRef.current) clearTimeout(urlUpdateTimeoutRef.current);
     };
-  }, [videoId, controller.currentTime, speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast]);
+  }, [mode, videoId, youtubePlayer.controller.currentTime, speed, slowMoSpeed, scrubSpeedSlow, scrubSpeedFast]);
 
   const [urlError, setUrlError] = useState<string | null>(null);
 
@@ -118,26 +142,83 @@ export function ScrubberShell() {
     setVideoId(id);
   };
 
+  const handleFileSelect = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setLocalVideoSrc(url);
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <UrlInput
-        value={urlInput}
-        onChange={(v) => { setUrlInput(v); setUrlError(null); }}
-        onSubmit={handleLoad}
-      />
-      {urlError && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {urlError}
-        </p>
+      <div className="flex justify-end gap-4">
+        {mode === "local" && localVideoSrc && (
+          <button
+            type="button"
+            onClick={() => setLocalVideoSrc(null)}
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 underline decoration-dotted underline-offset-4"
+          >
+            Load new video
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => setMode(mode === "youtube" ? "local" : "youtube")}
+          className="text-xs font-medium text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 underline decoration-dotted underline-offset-4"
+        >
+          {mode === "youtube" ? "Switch to local player" : "Switch to YouTube player"}
+        </button>
+      </div>
+
+      {mode === "youtube" ? (
+        <>
+          <UrlInput
+            value={urlInput}
+            onChange={(v) => { setUrlInput(v); setUrlError(null); }}
+            onSubmit={handleLoad}
+          />
+          {urlError && (
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+              {urlError}
+            </p>
+          )}
+          <PlayerArea
+            videoId={videoId}
+            isEmpty={!videoId}
+            containerId={videoId ? youtubePlayer.containerId : undefined}
+          >
+            <DrawingOverlay
+              isDrawingMode={drawing.isDrawingMode}
+              canvasRef={drawing.canvasRef}
+              onPointerDown={drawing.onPointerDown}
+              onPointerMove={drawing.onPointerMove}
+              onPointerUp={drawing.onPointerUp}
+              onPointerLeave={drawing.onPointerLeave}
+              onResize={drawing.onResize}
+            />
+          </PlayerArea>
+        </>
+      ) : (
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-900 border border-zinc-800">
+          <LocalPlayer
+            videoRef={localPlayer.videoRef}
+            src={localVideoSrc}
+            onFileSelect={handleFileSelect}
+          />
+          <DrawingOverlay
+            isDrawingMode={drawing.isDrawingMode}
+            canvasRef={drawing.canvasRef}
+            onPointerDown={drawing.onPointerDown}
+            onPointerMove={drawing.onPointerMove}
+            onPointerUp={drawing.onPointerUp}
+            onPointerLeave={drawing.onPointerLeave}
+            onResize={drawing.onResize}
+          />
+        </div>
       )}
-      <PlayerArea
-        videoId={videoId}
-        isEmpty={!videoId}
-        containerId={videoId ? containerId : undefined}
-      />
+
       <ControlBar
-        disabled={!videoId}
-        controller={videoId ? controller : null}
+        key={`${mode}-${videoId || "no-vid"}-${localVideoSrc || "no-src"}`}
+        disabled={!activeController}
+        controller={activeController}
         speed={speed}
         onSpeedChange={setSpeed}
         slowMoSpeed={slowMoSpeed}
@@ -151,6 +232,19 @@ export function ScrubberShell() {
         scrubber={scrubber}
         settingsExpanded={settingsExpanded}
         onSettingsExpandedChange={setSettingsExpanded}
+        isDrawingMode={drawing.isDrawingMode}
+        onToggleDrawing={drawing.onToggleDrawing}
+        drawingActiveTool={drawing.activeTool}
+        onDrawingToolChange={drawing.setActiveTool}
+        drawingColor={drawing.color}
+        onDrawingColorChange={drawing.setColor}
+        drawingStrokeWidth={drawing.strokeWidth}
+        onDrawingStrokeWidthChange={drawing.setStrokeWidth}
+        onUndo={drawing.undo}
+        onRedo={drawing.redo}
+        onClear={drawing.clear}
+        canUndo={drawing.strokes.length > 0}
+        canRedo={drawing.undoneStrokes.length > 0}
       />
       <HelpPanel />
     </div>

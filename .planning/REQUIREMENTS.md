@@ -1,104 +1,57 @@
 # Requirements: Film Scrubber
 
-**Defined:** 2026-02-11
+**Defined:** 2026-03-12
 **Core Value:** Controls must feel like a dedicated film room clicker — native-feeling buttons with instant response
 
-## v1 Requirements
+## v1 Requirements (Milestone v1.1)
 
-### Layout
+### Drawing Overlay
 
-- [ ] **LAYOUT-01**: Control bar uses stacked row layout: seek bar → play/toggle row → hold buttons row → jump buttons row → settings toggle
-- [ ] **LAYOUT-02**: Buttons span full width on mobile screens
-- [ ] **LAYOUT-03**: Settings panel collapses/expands via toggle button
-- [ ] **LAYOUT-04**: Settings panel contains slo-mo speed, forward/rewind scrub speed, and playback speed controls
-
-### Touch Behavior
-
-- [ ] **TOUCH-01**: All buttons have minimum 44px tap targets
-- [ ] **TOUCH-02**: Buttons prevent text selection (`user-select: none`, `-webkit-touch-callout: none`)
-- [ ] **TOUCH-03**: Buttons prevent double-tap zoom (`touch-action: manipulation`)
-- [ ] **TOUCH-04**: Buttons show visual press feedback (scale and/or color change on active/pressed state)
-- [ ] **TOUCH-05**: Hold buttons show distinct visual state while being held (e.g. color change, glow, or pressed-in appearance)
-
-### Playback Controls
-
-- [ ] **PLAY-01**: Play/pause toggle button
-- [ ] **PLAY-02**: Slow-mo / realtime toggle that switches between normal speed (1x) and configurable slow-mo speed
-- [ ] **PLAY-03**: Seek bar for scrubbing to any position in the video
-
-### Scrubbing
-
-- [ ] **SCRUB-01**: Hold-to-rewind button that scrubs backward while held
-- [ ] **SCRUB-02**: Hold-to-forward button that scrubs forward while held
-- [ ] **SCRUB-03**: Hold-to-scrub uses smoother timing (RAF-based or throttled) instead of raw setInterval
-- [ ] **SCRUB-04**: Scrub speed is configurable with default 2x multiplier
-- [ ] **SCRUB-05**: Scrubbing is consistent in both forward and reverse directions
-
-### Jump Buttons
-
-- [ ] **JUMP-01**: -1s / +1s jump buttons
-- [ ] **JUMP-02**: -5s / +5s jump buttons
-- [ ] **JUMP-03**: -10s / +10s jump buttons
-
-### Keyboard Shortcuts
-
-- [ ] **KEY-01**: Keyboard shortcuts updated to match new control scheme (play/pause, jumps, slow-mo toggle)
-
-## v2 Requirements
-
-### Polish
-
-- **POLISH-01**: Hold delay (300ms) to distinguish tap from hold on rewind/forward buttons
-- **POLISH-02**: Haptic feedback on supported devices
-- **POLISH-03**: Seek bar shows thumbnail preview on hover/drag
-
-### Advanced
-
-- **ADV-01**: Configurable jump amounts (change 1/5/10 defaults)
-- **ADV-02**: Gesture support (swipe to scrub)
+- [ ] **DRAW-01**: "Draw" toggle button in the control bar opens/closes the drawing tools section
+- [ ] **DRAW-02**: Transparent canvas overlays the video when drawing mode is active
+- [ ] **DRAW-03**: Drawing mode disables click-to-play/pause on the video
+- [ ] **DRAW-04**: Freehand drawing tool — pointer/finger traces a continuous path
+- [ ] **DRAW-05**: Line tool — click/tap sets start point, drag to end, release commits the line
+- [ ] **DRAW-06**: Color picker for pen color
+- [ ] **DRAW-07**: Stroke width selector
+- [ ] **DRAW-08**: Undo removes the last drawn stroke or line
+- [ ] **DRAW-09**: Redo restores the last undone stroke or line
+- [ ] **DRAW-10**: Clear removes all drawings from the canvas
+- [ ] **DRAW-11**: Drawing works with mouse (desktop) and touch (mobile)
+- [ ] **DRAW-12**: Canvas matches video dimensions and stays aligned on window resize
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Multiple player backends (Vimeo, etc.) | YouTube only for now |
-| User accounts / authentication | Local-only tool |
-| Video upload or hosting | YouTube URLs only |
-| Playlist / multi-video | Single video at a time |
-| Frame-level step presets (fine/medium/coarse) | Replaced by second-based jumps |
-| Real-time collaboration | Solo film review tool |
+| Drawing persistence across page reloads | Session-only — no save needed |
+| Timestamp-anchored annotations | Static overlay is simpler and sufficient |
+| Text annotations | Not requested for v1.1 |
+| Shape tools (rect, circle, arrow) | Freehand + line sufficient for v1.1 |
+| Export/screenshot with drawings | Not requested |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TOUCH-01 | Phase 1 | Complete |
-| TOUCH-02 | Phase 1 | Complete |
-| TOUCH-03 | Phase 1 | Complete |
-| TOUCH-04 | Phase 1 | Complete |
-| TOUCH-05 | Phase 1 | Complete |
-| PLAY-01 | Phase 2 | Complete |
-| PLAY-02 | Phase 2 | Complete |
-| PLAY-03 | Phase 2 | Complete |
-| SCRUB-01 | Phase 2 | Complete |
-| SCRUB-02 | Phase 2 | Complete |
-| SCRUB-03 | Phase 2 | Complete |
-| SCRUB-04 | Phase 2 | Complete |
-| SCRUB-05 | Phase 2 | Complete |
-| JUMP-01 | Phase 2 | Complete |
-| JUMP-02 | Phase 2 | Complete |
-| JUMP-03 | Phase 2 | Complete |
-| LAYOUT-01 | Phase 3 | Complete |
-| LAYOUT-02 | Phase 3 | Complete |
-| LAYOUT-03 | Phase 3 | Complete |
-| LAYOUT-04 | Phase 3 | Complete |
-| KEY-01 | Phase 3 | Complete |
+| DRAW-01 | Phase 5 | Pending |
+| DRAW-02 | Phase 5 | Pending |
+| DRAW-03 | Phase 5 | Pending |
+| DRAW-04 | Phase 5 | Pending |
+| DRAW-05 | Phase 5 | Pending |
+| DRAW-06 | Phase 5 | Pending |
+| DRAW-07 | Phase 5 | Pending |
+| DRAW-08 | Phase 5 | Pending |
+| DRAW-09 | Phase 5 | Pending |
+| DRAW-10 | Phase 5 | Pending |
+| DRAW-11 | Phase 5 | Pending |
+| DRAW-12 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1.1 requirements: 12 total
+- Mapped to phases: 12
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-02-11*
-*Last updated: 2026-02-13 after Phase 3 completion*
+*Requirements defined: 2026-03-12*
+*Last updated: 2026-03-12 after v1.1 initialization*

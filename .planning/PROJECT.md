@@ -19,19 +19,20 @@ The controls must feel like a dedicated film room clicker — native-feeling but
 - ✓ Settings persistence via localStorage — existing
 - ✓ Deep linking via URL params — existing
 - ✓ Keyboard shortcuts for desktop — existing
+- ✓ Touch-native button foundation (44px targets, no text selection, no zoom, press feedback) — v1.0
+- ✓ Hold button active state while held — v1.0
+- ✓ Slow-mo / realtime toggle (configurable speed, amber state) — v1.0
+- ✓ RAF-based hold-to-scrub (slow + fast, dual-speed, configurable) — v1.0
+- ✓ Fixed-second jump buttons (1s, 5s, 10s) — v1.0
+- ✓ Film clicker stacked row layout with collapsible settings — v1.0
+- ✓ Keyboard shortcuts: Space, JKL, S, Arrow+modifiers — v1.0
 
-### Active
+### Active (v1.1 Drawing Overlay)
 
-- [ ] Redesign control layout to film clicker style (seek bar → play/toggle → hold rewind/forward → jump buttons → collapsible settings)
-- [ ] Slow-mo / realtime toggle that switches between normal speed and configurable slow-mo speed
-- [ ] Hold-to-scrub rewind and forward buttons with default 2x speed multiplier
-- [ ] Fixed second-based jump buttons: -1/+1, -5/+5, -10/+10
-- [ ] Collapsible settings panel with slo-mo speed, forward speed, and playback speed
-- [ ] Buttons that behave like native app buttons: no text selection, proper tap feedback, no zoom on double-tap
-- [ ] Visual feedback on hold buttons when active (pressed state)
-- [ ] Smoother, more consistent hold-to-scrub in both directions (reduce stutter from current setInterval + seekTo approach)
-- [ ] Updated keyboard shortcuts to match new control scheme
-- [ ] Unified layout for both mobile and desktop
+- [ ] Drawing canvas overlay on video (transparent, toggleable, session-only)
+- [ ] Freehand and line drawing tools with color picker and stroke width
+- [ ] Undo, redo, and clear operations
+- [ ] Drawing works on both mouse and touch
 
 ### Out of Scope
 
@@ -62,10 +63,21 @@ The controls must feel like a dedicated film room clicker — native-feeling but
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Replace frame-step presets with fixed second jumps | Seconds are more intuitive for film review than abstract step sizes | — Pending |
-| Single layout for mobile and desktop | Simpler to maintain, film clicker layout works at all sizes | — Pending |
-| Slow-mo toggle instead of speed dropdown | Faster to switch between realtime and slow-mo during review | — Pending |
-| Configurable forward/rewind speed multiplier | Different film review tasks need different scrub speeds | — Pending |
+| Replace frame-step presets with fixed second jumps | Seconds are more intuitive for film review than abstract step sizes | ✓ Good — shipped v1.0 |
+| Single layout for mobile and desktop | Simpler to maintain, film clicker layout works at all sizes | ✓ Good — shipped v1.0 |
+| Slow-mo toggle instead of speed dropdown | Faster to switch between realtime and slow-mo during review | ✓ Good — shipped v1.0 |
+| Configurable forward/rewind speed multiplier | Different film review tasks need different scrub speeds | ✓ Good — dual-speed (slow+fast) shipped v1.0 |
+| RAF time-based scrubbing over setInterval | YouTube API variable latency causes stutter with setInterval | ✓ Good — smooth scrubbing confirmed |
+| Dual-speed hold scrubbing (slow + fast buttons) | User preferred separate buttons over single configurable speed | ✓ Good — shipped v1.0 |
+| YouTube IFrame API scrubbing limitation accepted | API bounds mobile scrub smoothness — no workaround available | — Accepted limitation |
+
+## Current State (v1.0 Shipped)
+
+- **Shipped:** 2026-03-12
+- **Stack:** Next.js 16 / React 19 / Tailwind 4 / TypeScript / YouTube IFrame API
+- **Key files:** `src/components/ControlBar.tsx`, `src/components/ScrubberShell.tsx`, `src/hooks/useScrubberControls.ts`
+- **Known limitations:** Mobile scrubbing smoothness bounded by YouTube IFrame API
+- **Tech debt:** Phase 4 (Testing & Validation) skipped — no cross-device QA performed
 
 ---
-*Last updated: 2026-02-11 after initialization*
+*Last updated: 2026-03-12 after v1.0 milestone*

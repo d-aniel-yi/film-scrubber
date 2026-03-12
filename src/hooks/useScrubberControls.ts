@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import type { YouTubePlayerController } from "@/types/player";
+import type { PlayerController } from "@/types/player";
 import { JUMP_AMOUNTS } from "@/lib/constants";
 import { jumpTime } from "@/lib/time";
 
@@ -16,7 +16,7 @@ const SEEK_THROTTLE_MS = 150;
 const PREBUFFER_SECONDS = 5;
 
 export function useScrubberControls(
-  controller: YouTubePlayerController | null,
+  controller: PlayerController | null,
   scrubSpeedSlow: number,
   scrubSpeedFast: number
 ) {

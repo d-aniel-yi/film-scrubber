@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { YouTubePlayerController } from "@/types/player";
+import type { PlayerController } from "@/types/player";
 import type { YTPlayerInstance } from "@/types/youtube";
 
 const SCRIPT_URL = "https://www.youtube.com/iframe_api";
@@ -40,7 +40,7 @@ export function useYouTubePlayer(videoId: string | null) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(100);
 
-  const controller: YouTubePlayerController = {
+  const controller: PlayerController = {
     play: useCallback(() => playerRef.current?.playVideo(), []),
     pause: useCallback(() => playerRef.current?.pauseVideo(), []),
     seekTo: useCallback((seconds: number) => {

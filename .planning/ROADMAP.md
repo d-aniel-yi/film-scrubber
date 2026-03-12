@@ -2,99 +2,58 @@
 
 ## Overview
 
-Transform the existing YouTube scrubber into a native-feeling film clicker through four focused phases: establish touch-native button foundation, implement core playback and hold-to-scrub controls, reorganize into film-clicker layout with keyboard shortcuts, and validate across devices. Each phase delivers a complete, verifiable user capability that builds toward professional film review UX.
+Add a drawing/annotation overlay to the film clicker, enabling users to draw on top of video while reviewing plays. Drawing is a transparent canvas overlay — session-only, static (not tied to timestamps), with freehand and line tools, color, stroke width, undo/redo, and clear.
+
+## Milestones
+
+- ✅ **v1.0 Film Clicker MVP** — Phases 1-3 (shipped 2026-03-12) — [archive](.planning/milestones/v1.0-ROADMAP.md)
+- 🚧 **v1.1 Drawing Overlay** — Phase 5 (in progress)
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+<details>
+<summary>✅ v1.0 Film Clicker MVP (Phases 1-4) — SHIPPED 2026-03-12</summary>
 
-Decimal phases appear between their surrounding integers in numeric order.
+- [x] Phase 1: Touch-Native Foundation (2/2 plans) — completed 2026-02-12
+- [x] Phase 2: Core Playback & Scrubbing (3/3 plans) — completed 2026-02-12
+- [x] Phase 3: Film Clicker Layout (4/4 plans) — completed 2026-02-13
+- [~] Phase 4: Testing & Validation — skipped (accepted as tech debt)
 
-- [x] **Phase 1: Touch-Native Foundation** - Buttons feel like native app controls, not tappable web text
-- [x] **Phase 2: Core Playback & Scrubbing** - Users can play, seek, jump, and hold-to-scrub through video
-- [x] **Phase 3: Film Clicker Layout** - Controls reorganized into film-clicker style with keyboard shortcuts
-- [ ] **Phase 4: Testing & Validation** - Bug-free, smooth experience validated across devices
+</details>
+
+### 🚧 v1.1 Drawing Overlay
+
+- [ ] **Phase 5: Drawing Overlay** — Canvas overlay with draw tools, undo/redo/clear, color and stroke width
 
 ## Phase Details
 
-### Phase 1: Touch-Native Foundation
-**Goal**: Buttons feel like native app controls with instant response, not tappable web text
-**Depends on**: Nothing (first phase)
-**Requirements**: TOUCH-01, TOUCH-02, TOUCH-03, TOUCH-04, TOUCH-05
+### Phase 5: Drawing Overlay
+**Goal**: Users can activate a drawing overlay on the video, draw freehand or straight lines with configurable color/stroke, and undo/redo/clear their work
+**Depends on**: Phase 3 (existing ControlBar)
+**Requirements**: DRAW-01, DRAW-02, DRAW-03, DRAW-04, DRAW-05, DRAW-06, DRAW-07, DRAW-08, DRAW-09, DRAW-10, DRAW-11, DRAW-12
 **Success Criteria** (what must be TRUE):
-  1. All buttons have minimum 44px tap targets on mobile
-  2. User cannot select text when tapping buttons repeatedly
-  3. User cannot trigger double-tap zoom when using buttons
-  4. Buttons show visual press feedback (scale or color) on tap
-  5. Hold buttons show distinct visual state while being held
+  1. User can toggle drawing mode on/off via a "Draw" button in the control bar
+  2. A transparent canvas appears over the video when drawing mode is active
+  3. Tapping/clicking the video in draw mode does NOT play or pause video
+  4. User can draw freehand paths with finger or mouse
+  5. User can draw straight lines by clicking start and dragging to end
+  6. User can change pen color and stroke width before drawing
+  7. User can undo the last stroke and redo it
+  8. User can clear all drawings
+  9. Drawing works on both mobile (touch) and desktop (mouse)
+  10. Canvas stays aligned with video when window is resized
 **Plans**: 2 plans
 
 Plans:
-- [x] 01-01-PLAN.md — Button sizing and touch prevention (44px targets, no text selection, no zoom)
-- [x] 01-02-PLAN.md — Visual feedback states (press feedback and hold state indicators)
-
-### Phase 2: Core Playback & Scrubbing
-**Goal**: Users can play, seek, jump through time, and hold-to-scrub in both directions
-**Depends on**: Phase 1
-**Requirements**: PLAY-01, PLAY-02, PLAY-03, SCRUB-01, SCRUB-02, SCRUB-03, SCRUB-04, SCRUB-05, JUMP-01, JUMP-02, JUMP-03
-**Success Criteria** (what must be TRUE):
-  1. User can play/pause video with toggle button
-  2. User can switch between normal speed and slow-motion instantly
-  3. User can scrub to any position via seek bar
-  4. User can hold rewind button to scrub backward continuously
-  5. User can hold forward button to scrub forward continuously
-  6. Scrubbing feels smooth and consistent in both directions (no visible stutter)
-  7. User can jump backward/forward by 1s, 5s, or 10s with dedicated buttons
-**Plans**: 3 plans
-
-Plans:
-- [x] 02-01-PLAN.md — Remove step presets, add slow-mo toggle and jump buttons
-- [x] 02-02-PLAN.md — Replace setInterval scrubbing with RAF-based smooth scrubbing
-- [x] 02-03-PLAN.md — Human verification of playback and scrubbing functionality
-
-### Phase 3: Film Clicker Layout
-**Goal**: Controls reorganized into film-clicker style with keyboard shortcuts matching film editing workflows
-**Depends on**: Phase 2
-**Requirements**: LAYOUT-01, LAYOUT-02, LAYOUT-03, LAYOUT-04, KEY-01
-**Success Criteria** (what must be TRUE):
-  1. Control layout follows film clicker hierarchy: seek bar at top, play/toggle row, hold buttons, jump buttons, collapsible settings at bottom
-  2. Buttons span full width on mobile, comfortable width on desktop
-  3. Settings panel collapses/expands via toggle button
-  4. User can adjust slow-mo speed, scrub speed, and playback speed in settings panel
-  5. User can trigger all main controls via keyboard shortcuts (play/pause, jumps, slow-mo toggle)
-**Plans**: 4 plans
-
-Plans:
-- [x] 03-01-PLAN.md — Reorganize ControlBar into stacked row layout (seek bar → play/toggle → hold → jump)
-- [x] 03-02-PLAN.md — Add collapsible settings panel with toggle button
-- [x] 03-03-PLAN.md — Update keyboard shortcuts for film clicker controls (S for slow-mo, modified arrows for jumps)
-- [x] 03-04-PLAN.md — Human verification of layout, settings panel, and keyboard shortcuts
-
-### Phase 4: Testing & Validation
-**Goal**: Bug-free, smooth experience validated across mobile and desktop devices
-**Depends on**: Phase 3
-**Requirements**: (validation of all v1 requirements)
-**Success Criteria** (what must be TRUE):
-  1. All controls work correctly on iPhone and Android mobile devices
-  2. All controls work correctly on desktop with mouse and keyboard
-  3. Hold-to-scrub performs smoothly without stutter on 4G/WiFi networks
-  4. Settings persist across browser sessions via localStorage
-  5. No visual glitches, layout breaks, or unresponsive buttons found during QA
-**Plans**: TBD
-
-Plans:
-- [ ] 04-01: TBD during planning
+- [ ] 05-01-PLAN.md — Canvas overlay foundation (toggle, transparent canvas, pointer event interception, freehand drawing, resize alignment)
+- [ ] 05-02-PLAN.md — Full tool suite (line tool, color picker, stroke width, undo/redo, clear, mobile touch support)
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Touch-Native Foundation | 2/2 | Complete | 2026-02-12 |
-| 2. Core Playback & Scrubbing | 3/3 | Complete | 2026-02-12 |
-| 3. Film Clicker Layout | 4/4 | Complete | 2026-02-13 |
-| 4. Testing & Validation | 0/TBD | Not started | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Touch-Native Foundation | v1.0 | 2/2 | Complete | 2026-02-12 |
+| 2. Core Playback & Scrubbing | v1.0 | 3/3 | Complete | 2026-02-12 |
+| 3. Film Clicker Layout | v1.0 | 4/4 | Complete | 2026-02-13 |
+| 4. Testing & Validation | v1.0 | 0/0 | Skipped | — |
+| 5. Drawing Overlay | v1.1 | 0/2 | Not started | — |

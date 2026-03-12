@@ -1,0 +1,24 @@
+# Phase 2 Summary: Local File Player
+
+> **Status**: ✅ Complete
+> **Date**: 2026-02-18
+
+## Accomplished
+1.  **Implemented `useLocalPlayer` Hook**: Created a new hook in `src/hooks/useLocalPlayer.ts` that implements `PlayerController` for local HMTL5 video elements.
+2.  **Created `LocalPlayer` Component**: Developed `src/components/LocalPlayer.tsx` with drag-and-drop file support and video rendering.
+3.  **Integrated into Shell**: Updated `ScrubberShell.tsx` to include `LocalPlayer`, manage local file state, and switch controllers dynamically based on mode.
+4.  **Debugging & Fixes**:
+    -   Fixed missing controls by handling `readyState` correctly in `useLocalPlayer`.
+    -   Added "Load New Video" button for easier resetting.
+    -   Added `key` to `ControlBar` to ensure proper re-initialization.
+    -   **Update:** Made player controls visible by default (disabled state) for better UX.
+    -   **Update:** Added disabled styling to Jump buttons.
+    -   **Update:** Implemented Frame-Based Scrubbing (+1f/-1f) for local player.
+
+## Verification
+- `npx tsc --noEmit` passed successfully.
+- Code changes verified correct by design (props, types).
+
+## Next Steps
+- Manual verification of UI by user.
+- Phase 3: YouTube Downloader.
