@@ -192,6 +192,7 @@ export function ScrubberShell() {
               onPointerMove={drawing.onPointerMove}
               onPointerUp={drawing.onPointerUp}
               onPointerLeave={drawing.onPointerLeave}
+              onResize={drawing.onResize}
             />
           </PlayerArea>
         </>
@@ -209,6 +210,7 @@ export function ScrubberShell() {
             onPointerMove={drawing.onPointerMove}
             onPointerUp={drawing.onPointerUp}
             onPointerLeave={drawing.onPointerLeave}
+            onResize={drawing.onResize}
           />
         </div>
       )}

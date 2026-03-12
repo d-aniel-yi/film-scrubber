@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import type React from "react";
 
 export type DrawingTool = "freehand" | "line";
@@ -31,6 +31,7 @@ export type DrawingState = {
   undo: () => void;
   redo: () => void;
   clear: () => void;
+  onResize: () => void;
 };
 
 function getCanvasPoint(
@@ -68,12 +69,11 @@ function redrawCanvas(
         ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
       }
     } else {
-      // line tool: draw from first to last point
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-      ctx.lineTo(
-        stroke.points[stroke.points.length - 1].x,
-        stroke.points[stroke.points.length - 1].y
-      );
+      // line tool: draw from first point to last point
+      const start = stroke.points[0];
+      const end = stroke.points[stroke.points.length - 1];
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(end.x, end.y);
     }
 
     ctx.stroke();
@@ -85,6 +85,10 @@ export function useDrawing(): DrawingState {
   const currentStrokeRef = useRef<Stroke | null>(null);
   const isPointerDownRef = useRef(false);
 
+  // Refs mirror state so callbacks avoid stale closures
+  const strokesRef = useRef<Stroke[]>([]);
+  const undoneStrokesRef = useRef<Stroke[]>([]);
+
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [activeTool, setActiveTool] = useState<DrawingTool>("freehand");
   const [color, setColor] = useState("#ff0000");
@@ -92,18 +96,15 @@ export function useDrawing(): DrawingState {
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [undoneStrokes, setUndoneStrokes] = useState<Stroke[]>([]);
 
-  // Redraw when strokes change (handles undo/redo/clear) but not during active drawing
-  useEffect(() => {
-    if (canvasRef.current && !isPointerDownRef.current) {
-      redrawCanvas(canvasRef.current, strokes);
-    }
-  }, [strokes]);
+  // Keep refs in sync with state
+  useEffect(() => { strokesRef.current = strokes; }, [strokes]);
+  useEffect(() => { undoneStrokesRef.current = undoneStrokes; }, [undoneStrokes]);
 
   const onToggleDrawing = () => {
     setIsDrawingMode((v) => {
       if (v && canvasRef.current) {
-        // Exiting drawing mode — clear any preview state
-        redrawCanvas(canvasRef.current, strokes);
+        // Exiting drawing mode — redraw to clear any preview state
+        redrawCanvas(canvasRef.current, strokesRef.current);
       }
       return !v;
     });
@@ -126,7 +127,7 @@ export function useDrawing(): DrawingState {
 
     currentStrokeRef.current = stroke;
     isPointerDownRef.current = true;
-    redrawCanvas(canvas, strokes, currentStrokeRef.current);
+    redrawCanvas(canvas, strokesRef.current, currentStrokeRef.current);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -135,8 +136,16 @@ export function useDrawing(): DrawingState {
     if (!canvas) return;
 
     const point = getCanvasPoint(e, canvas);
-    currentStrokeRef.current.points.push(point);
-    redrawCanvas(canvas, strokes, currentStrokeRef.current);
+
+    if (currentStrokeRef.current.tool === "line") {
+      // Rubber-band preview: keep origin, replace endpoint
+      currentStrokeRef.current.points = [currentStrokeRef.current.points[0], point];
+    } else {
+      // Freehand: append each point
+      currentStrokeRef.current.points.push(point);
+    }
+
+    redrawCanvas(canvas, strokesRef.current, currentStrokeRef.current);
   };
 
   const onPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -147,14 +156,16 @@ export function useDrawing(): DrawingState {
     isPointerDownRef.current = false;
 
     if (stroke && stroke.points.length > 1) {
-      const committed = [...strokes, stroke];
+      const committed = [...strokesRef.current, stroke];
       setStrokes(committed);
       setUndoneStrokes([]);
+      strokesRef.current = committed;
+      undoneStrokesRef.current = [];
       currentStrokeRef.current = null;
       if (canvas) redrawCanvas(canvas, committed);
     } else {
       currentStrokeRef.current = null;
-      if (canvas) redrawCanvas(canvas, strokes);
+      if (canvas) redrawCanvas(canvas, strokesRef.current);
     }
   };
 
@@ -166,48 +177,58 @@ export function useDrawing(): DrawingState {
     isPointerDownRef.current = false;
 
     if (stroke && stroke.points.length > 1) {
-      const committed = [...strokes, stroke];
+      const committed = [...strokesRef.current, stroke];
       setStrokes(committed);
       setUndoneStrokes([]);
+      strokesRef.current = committed;
+      undoneStrokesRef.current = [];
       currentStrokeRef.current = null;
       if (canvas) redrawCanvas(canvas, committed);
     } else {
       currentStrokeRef.current = null;
-      if (canvas) redrawCanvas(canvas, strokes);
+      if (canvas) redrawCanvas(canvas, strokesRef.current);
     }
   };
 
-  const undo = () => {
-    const lastStroke = strokes[strokes.length - 1];
-    if (!lastStroke) return;
-    const next = strokes.slice(0, -1);
+  const undo = useCallback(() => {
+    const current = strokesRef.current;
+    if (current.length === 0) return;
+    const removed = current[current.length - 1];
+    const next = current.slice(0, -1);
     setStrokes(next);
-    setUndoneStrokes((prev) => [...prev, lastStroke]);
+    setUndoneStrokes((prev) => [...prev, removed]);
+    strokesRef.current = next;
+    undoneStrokesRef.current = [...undoneStrokesRef.current, removed];
     if (canvasRef.current) redrawCanvas(canvasRef.current, next);
-  };
+  }, []);
 
-  const redo = () => {
-    setUndoneStrokes((prev) => {
-      const stroke = prev[prev.length - 1];
-      if (!stroke) return prev;
-      const nextUndone = prev.slice(0, -1);
-      setStrokes((s) => {
-        const committed = [...s, stroke];
-        if (canvasRef.current) redrawCanvas(canvasRef.current, committed);
-        return committed;
-      });
-      return nextUndone;
-    });
-  };
+  const redo = useCallback(() => {
+    const undone = undoneStrokesRef.current;
+    if (undone.length === 0) return;
+    const stroke = undone[undone.length - 1];
+    const nextUndone = undone.slice(0, -1);
+    const next = [...strokesRef.current, stroke];
+    setUndoneStrokes(nextUndone);
+    setStrokes(next);
+    strokesRef.current = next;
+    undoneStrokesRef.current = nextUndone;
+    if (canvasRef.current) redrawCanvas(canvasRef.current, next);
+  }, []);
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setStrokes([]);
     setUndoneStrokes([]);
+    strokesRef.current = [];
+    undoneStrokesRef.current = [];
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
-  };
+  }, []);
+
+  const handleResize = useCallback(() => {
+    if (canvasRef.current) redrawCanvas(canvasRef.current, strokesRef.current);
+  }, []);
 
   return {
     isDrawingMode,
@@ -228,5 +249,6 @@ export function useDrawing(): DrawingState {
     undo,
     redo,
     clear,
+    onResize: handleResize,
   };
 }

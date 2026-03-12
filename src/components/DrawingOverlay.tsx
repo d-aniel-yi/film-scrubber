@@ -11,6 +11,7 @@ type DrawingOverlayProps = Pick<
   | "onPointerMove"
   | "onPointerUp"
   | "onPointerLeave"
+  | "onResize"
 >;
 
 export function DrawingOverlay({
@@ -20,15 +21,28 @@ export function DrawingOverlay({
   onPointerMove,
   onPointerUp,
   onPointerLeave,
+  onResize,
 }: DrawingOverlayProps) {
-  // Sync canvas pixel dimensions to its CSS layout dimensions on mount.
-  // ResizeObserver will be added in plan 05-02.
+  // Sync canvas pixel dimensions to its CSS layout dimensions using ResizeObserver.
+  // This keeps the canvas aligned when the window or container is resized (DRAW-12).
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Initial size sync on mount
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-  }, [canvasRef]);
+
+    const observer = new ResizeObserver(() => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      // Signal the hook to redraw all committed strokes onto the resized canvas
+      onResize?.();
+    });
+
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [canvasRef, onResize]);
 
   return (
     <canvas
